@@ -1,0 +1,6 @@
+# PostgreSQL and data processing requirements
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+geoalchemy2==0.14.2
+pandas==2.1.4
+numpy==1.25.2
