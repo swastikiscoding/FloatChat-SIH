@@ -1,3 +1,4 @@
+from schemas.chat import AgentRequest, AgentResponse
 from pydantic_ai import Agent, RunContext, ModelSettings
 from pydantic import BaseModel, Field
 from tools import all_tools
@@ -20,12 +21,6 @@ model_settings = ModelSettings(
     extra_body=None
 )
 
-class AgentRequest(BaseModel):
-    message: str = Field(..., description="User's message to the assistant. Example: 'What is the average temperature of the ocean at a depth of 1000 meters?'")
-
-class AgentResponse(BaseModel):
-    reply: str = Field(..., description="Assistant's reply to the user's message.")
-
 agent = Agent(
     'google-gla:gemini-1.5-flash',
     model_settings = model_settings,
@@ -35,6 +30,10 @@ agent = Agent(
     ),
     tools=all_tools
 )
+
+async def get_bot_response(request: AgentRequest) -> AgentResponse:
+    result = await agent.run(request.message)
+    return AgentResponse(reply=result)
 
 if __name__ == "__main__":
     response: AgentResponse = agent.run_sync("What is the average temperature of the ocean at a depth of 1000 meters?").output

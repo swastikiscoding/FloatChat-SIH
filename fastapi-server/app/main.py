@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
-from agent import agent, AgentRequest, AgentResponse
 from loguru import logger
 
 from contextlib import asynccontextmanager
@@ -29,11 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.post("/chat")
-async def chat(req: AgentRequest) -> AgentResponse:
-    agent_result = await agent.run(req.message)
-    return agent_result.output
 
 @app.get("/")
 async def root():
