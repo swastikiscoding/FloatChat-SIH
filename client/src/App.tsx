@@ -5,13 +5,13 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/clerk-react";
-import Navbar from './components/landing page/Navbar'
-import Mainfeatures from './components/landing page/Features'
-import Mode from './components/landing page/Mode'
-import Features from './components/landing page/Features'
-import Faq from './components/landing page/Faq'
-import DevTeam from './components/landing page/Team'
-import Footer from './components/landing page/Footer'
+import Navbar from './components/landing-page/Navbar'
+import Mainfeatures from './components/landing-page/Features'
+import Mode from './components/landing-page/Mode'
+import Features from './components/landing-page/Features'
+import Faq from './components/landing-page/Faq'
+import DevTeam from './components/landing-page/Team'
+import Footer from './components/landing-page/Footer'
 
 import "./App.css";
 
