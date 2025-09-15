@@ -1,6 +1,9 @@
 from pydantic_ai import Agent, RunContext, ModelSettings
 from pydantic import BaseModel, Field
 from tools import all_tools
+from loguru import logger
+from dotenv import load_dotenv
+load_dotenv()
 
 model_settings = ModelSettings(
     max_tokens=512,
@@ -29,12 +32,10 @@ agent = Agent(
     output_type= AgentResponse,
     system_prompt=(
         "You are FloatChat, an AI assistant that helps researchers in the field of oceanography. "
-        "You have full access to the Argo database and can provide information about oceanographic data, "
-        "including temperature, salinity, and other key metrics."
     ),
     tools=all_tools
 )
 
 if __name__ == "__main__":
-    response = agent.run("What is the average temperature of the ocean at a depth of 1000 meters?")
+    response: AgentResponse = agent.run_sync("What is the average temperature of the ocean at a depth of 1000 meters?").output
     print(response)
