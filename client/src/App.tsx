@@ -1,28 +1,44 @@
-import Navbar from './Components/landing page/Navbar'
-import Mainfeatures from './Components/landing page/Features'
-import Mode from './Components/landing page/Mode'
-import Features from './Components/landing page/Features'
-import Faq from './Components/landing page/Faq'
-import DevTeam from './Components/landing page/Team'
-import Footer from './Components/landing page/Footer'
 
-import './App.css'
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
+import Navbar from './components/landing page/Navbar'
+import Mainfeatures from './components/landing page/Features'
+import Mode from './components/landing page/Mode'
+import Features from './components/landing page/Features'
+import Faq from './components/landing page/Faq'
+import DevTeam from './components/landing page/Team'
+import Footer from './components/landing page/Footer'
+
+import "./App.css";
 
 function App() {
   return (
     <>
       <div className="main">
-        <div className='mb-15'><Features/></div>
+        <header>
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </header>
         <Navbar/>
         <Mainfeatures/>
         <Mode/>
-        <Faq/>
-        <DevTeam/>
-        <Footer/>
-
+        <div className="mb-15">
+          <Features />
+        </div>
+        <Faq />
+        <DevTeam />
+        <Footer />
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
