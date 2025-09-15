@@ -1,7 +1,7 @@
 [project]
 name = "fastapi-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastAPI backend server for Argo data processing"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -10,3 +10,11 @@ dependencies = [
     "geopandas>=1.1.1",
     "pydantic-ai>=1.0.6",
 ]
+
+[dependency-groups]
+dev = [
+    "taskipy>=1.14.1",
+]
+
+[tool.taskipy.tasks]
+start = "uvicorn fastapi_server.main:app --reload"

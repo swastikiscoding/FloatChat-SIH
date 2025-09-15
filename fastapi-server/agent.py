@@ -1,4 +1,4 @@
-from pydantic_ai import Agent, Tool, RunContext, ModelSettings
+from pydantic_ai import Agent, RunContext, ModelSettings
 from pydantic import BaseModel, Field
 from tools import all_tools
 
@@ -17,16 +17,16 @@ model_settings = ModelSettings(
     extra_body=None
 )
 
-class ChatRequest(BaseModel):
+class AgentRequest(BaseModel):
     message: str = Field(..., description="User's message to the assistant. Example: 'What is the average temperature of the ocean at a depth of 1000 meters?'")
 
-class ChatResponse(BaseModel):
+class AgentResponse(BaseModel):
     reply: str = Field(..., description="Assistant's reply to the user's message.")
 
 agent = Agent(
     'google-gla:gemini-1.5-flash',
     model_settings = model_settings,
-    output_type= ChatResponse,
+    output_type= AgentResponse,
     system_prompt=(
         "You are FloatChat, an AI assistant that helps researchers in the field of oceanography. "
         "You have full access to the Argo database and can provide information about oceanographic data, "
