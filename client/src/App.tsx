@@ -1,14 +1,36 @@
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
+import Features from "./components/landing page/Features";
+import Faq from "./components/landing page/Faq";
+import DevTeam from "./components/landing page/Team";
+import Footer from "./components/landing page/Footer";
 
-export default function App() {
+import "./App.css";
+function App() {
   return (
-    <header>
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
-    </header>
+    <>
+      <div className="main">
+        <header>
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </header>
+        <div className="mb-15">
+          <Features />
+        </div>
+        <Faq />
+        <DevTeam />
+        <Footer />
+      </div>
+    </>
   );
 }
+
+export default App;
