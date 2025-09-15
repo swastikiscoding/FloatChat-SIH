@@ -1,5 +1,3 @@
-import React from "react";
-
 import myImage from "../../assets/img.jpg";
 import tick from "../../assets/tick.jpg";
 import img2 from "../../assets/graph.jpg";

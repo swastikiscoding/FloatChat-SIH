@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import Features from './components/landing page/Features'
-import Faq from './components/landing page/faq'
+import Faq from './components/landing page/Faq'
 import DevTeam from './components/landing page/Team'
 import Footer from './components/landing page/Footer'
 
