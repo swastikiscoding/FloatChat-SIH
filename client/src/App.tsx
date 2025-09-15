@@ -1,12 +1,12 @@
 
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
+// import {
+//   SignedIn,
+//   SignedOut,
+//   SignInButton,
+//   UserButton,
+// } from "@clerk/clerk-react";
 import Navbar from './components/landing-page/Navbar'
-import Mainfeatures from './components/landing-page/Features'
+import Mainfeatures from './components/landing-page/Mainfeatures'
 import Mode from './components/landing-page/Mode'
 import Features from './components/landing-page/Features'
 import Faq from './components/landing-page/Faq'
@@ -19,20 +19,20 @@ function App() {
   return (
     <>
       <div className="main">
-        <header>
+        {/* <header>
           <SignedOut>
             <SignInButton />
           </SignedOut>
           <SignedIn>
             <UserButton />
           </SignedIn>
-        </header>
+        </header> */}
         <Navbar/>
         <Mainfeatures/>
-        <Mode/>
         <div className="mb-15">
           <Features />
         </div>
+        <Mode/>
         <Faq />
         <DevTeam />
         <Footer />
