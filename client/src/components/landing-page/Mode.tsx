@@ -12,7 +12,7 @@ const modes=[
 const Mode = () => {
   return (
     <div className="bg-black text-white py-16 px-6 w-screen">
-      <div className="sm:w-[80vw] mx-auto bg-black rounded-2xl p-10 shadow-[0_0_40px_rgba(133,147,147,0.3)]">
+      <div className="sm:w-[80vw] mx-auto bg-black rounded-2xl p-10 ">
         <h2 className="text-3xl font-bold text-center mb-8">Choose the mode that fits you</h2>
         <h2 className="font-extralight text-center mb-10">Choose your path to discovery — whether you're learning, researching, or exploring it all.</h2>
         

@@ -1,14 +1,16 @@
-import bgImage from "../../assets/bgImage.svg"
-
+import bgImage from "../../assets/bgImage.png"
 const Navbar = () => {
   return (
-      <div className="min-w-screen h-[70vh] sm:h-[99vh] bg-cover bg-center bg-black"
-            style={{backgroundImage:`url(${bgImage})`}}>
-          <nav className="flex space justify-between pt-5 pl-8 pr-8">
-            <div className="text-white">FloatChat</div>
-            <div className=" hidden sm:flex text-white gap-8 pl-4 pr-4 pt-1 pb-1 rounded-2xl border-white border">
+      <div className="min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden"
+            style={{backgroundImage:`url(${bgImage})`,backgroundSize: "101vw"}}>
+          <nav className="flex  justify-between pt-5 pl-8 pr-8">
+            <div className="flex gap-2 items-center">
+              <span className="text-cyan-400 text-2xl">🌊</span>
+              <div className="font-semibold text-xl">FloatChat</div>
+            </div>
+            <div className=" hidden sm:flex text-white gap-8 pl-4 pr-4 pt-1 pb-1 rounded-2xl border-[#00ff9221] border">
               <div className="cursor-pointer">FAQ</div>
-              <div className="cursor-pointer">features</div>
+              <div className="cursor-pointer">Features</div>
               <div className="cursor-pointer">About Us</div>
             </div>
             <button className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer">SignIn</button>
