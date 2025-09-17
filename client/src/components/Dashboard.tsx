@@ -2,12 +2,15 @@ import React from "react";
 import {
   UserButton,
 } from "@clerk/clerk-react";
+import Earth from "./Earth";
 
 const Dashboard: React.FC = () => {
   return (
     <div>
         <UserButton />
-      <p>private dashboard</p>
+      <div>
+        <Earth/>
+      </div>
     </div>
   );
 };
