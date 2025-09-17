@@ -160,3 +160,5 @@ cython_debug/
 
 # in case I rename the 2.4GB argo_profiles.sql file:
 *.sql
+
+.env

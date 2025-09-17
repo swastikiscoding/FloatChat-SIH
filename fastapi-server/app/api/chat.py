@@ -5,5 +5,5 @@ from services.chatbot import get_bot_response
 router = APIRouter()
 
 @router.post("/", response_model=AgentResponse)
-async def chat_endpoint(request: AgentRequest):
-    return await get_bot_response(request)
+def chat_endpoint(request: AgentRequest):
+    return get_bot_response(request)
