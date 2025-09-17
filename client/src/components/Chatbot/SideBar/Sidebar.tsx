@@ -1,4 +1,3 @@
-import React from "react";
 import History from "./History";
 import Modes from "./Modes";
 
