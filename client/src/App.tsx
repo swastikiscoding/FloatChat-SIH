@@ -12,8 +12,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./components/landing-page/Navbar";
 import Mainfeatures from "./components/landing-page/Mainfeatures";
 import Mode from "./components/landing-page/Mode";
-import { BackgroundPaths } from "./components/ui/background-paths";
-import { Waves } from "./components/ui/waves-background";
 
 function App() {
   const navigate = useNavigate();

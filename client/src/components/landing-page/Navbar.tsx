@@ -1,4 +1,3 @@
-import bgImage from "../../assets/bgImage.png"
 import { Waves } from "../ui/waves-background"
 
 const Navbar = () => {
