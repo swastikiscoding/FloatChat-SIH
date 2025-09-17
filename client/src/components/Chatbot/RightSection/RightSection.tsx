@@ -1,4 +1,3 @@
-import React from 'react'
 import ChatSection from './ChatSection'
 import InputSection from './InputSection'
 
