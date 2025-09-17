@@ -31,9 +31,8 @@ agent = Agent(
     tools=all_tools
 )
 
-async def get_bot_response(request: AgentRequest) -> AgentResponse:
-    result = await agent.run(request.message)
-    return AgentResponse(reply=result)
+def get_bot_response(request: AgentRequest) -> AgentResponse:
+    return agent.run_sync(request.message).output
 
 if __name__ == "__main__":
     response: AgentResponse = agent.run_sync("What is the average temperature of the ocean at a depth of 1000 meters?").output
