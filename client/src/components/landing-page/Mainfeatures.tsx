@@ -12,7 +12,7 @@ const features=[
   { feature: "Scalable Data Pipelines", about: "Handles large volumes of Argo NetCDF files efficiently for future expansion."},
   { feature: "User-friendly Interface", about: "Clean design tailored for both experts and non-technical users."},
 ];  
-const Features = () => {
+const Mainfeatures = () => {
   return (
     <div className="bg-black text-white py-16 px-6">
       <div className="sm:w-[80vw] mx-auto bg-black rounded-2xl p-10">
@@ -40,4 +40,4 @@ const Features = () => {
 };
 
 
-export default Features
+export default Mainfeatures
