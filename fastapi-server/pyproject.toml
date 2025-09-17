@@ -15,6 +15,7 @@ dependencies = [
     "geopandas>=1.1.1",
     "loguru>=0.7.3",
     "pydantic-ai>=1.0.6",
+    "pydantic-ai-slim[duckduckgo,tavily]>=1.0.6",
 ]
 
 [dependency-groups]

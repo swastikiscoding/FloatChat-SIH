@@ -1,7 +1,14 @@
-from app.schemas.chat import AgentRequest, AgentResponse
+from app.schemas.chat import AgentRequest, AgentResponse, AgentDependencies, UserMode
 from app.services.tools import all_tools
-from pydantic_ai import Agent, RunContext, ModelSettings
+from typing import cast
+from pydantic_ai.tools import Tool
+from pydantic_ai import Agent, ModelSettings, RunContext
+from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.providers.azure import AzureProvider
+from pydantic_ai.run import AgentRunResult
+from pydantic_ai.messages import ModelMessage
 from loguru import logger
+from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -20,19 +27,47 @@ model_settings = ModelSettings(
     extra_body=None,
 )
 
-agent = Agent(
-    'google-gla:gemini-1.5-flash',
-    model_settings = model_settings,
-    output_type= AgentResponse,
-    system_prompt=(
-        "You are FloatChat, an AI assistant that helps researchers in the field of oceanography. "
+default_sys_prompt = \
+"""You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
+When outputting any data or answering any queries, ensure that you always cite the source of your information.
+"""
+
+model = OpenAIChatModel(
+    'gpt-4o',
+    provider=AzureProvider(
+        azure_endpoint=getenv('AZURE_OPENAI_ENDPOINT', 'https://your-endpoint.openai.azure.com/'),
+        api_version=getenv('AZURE_API_VERSION', 'your-api-version'),
+        api_key=getenv('AZURE_API_KEY', 'your-api-key'),
     ),
-    tools=all_tools
 )
 
-def get_bot_response(request: AgentRequest) -> AgentResponse:
-    return agent.run_sync(request.message).output
+agent = Agent(
+    model=model,
+    deps_type=AgentDependencies,
+    output_type=AgentResponse,
+    model_settings=model_settings,
+    instructions=default_sys_prompt,
+    tools=[cast(Tool[AgentDependencies], tool) for tool in all_tools], # I have no idea what I am doing.
+)
+
+@agent.system_prompt
+def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
+    user_mode = ctx.deps.mode
+    if user_mode == UserMode.STUDENT:
+        return "You are a student studying oceanography."
+    return "You are a researcher studying oceanography."
+
+def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
+    response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
+    new_history = response.new_messages()
+    return response.output, new_history
 
 if __name__ == "__main__":
-    response: AgentResponse = agent.run_sync("What is the average temperature of the ocean at a depth of 1000 meters?").output
+    response, _ = get_bot_response_with_new_history(
+        AgentRequest(
+            message="What is the average temperature of the ocean at a depth of 1000 meters?",
+            deps=AgentDependencies(mode=UserMode.STUDENT)
+        ),
+        []
+    )
     print(response)

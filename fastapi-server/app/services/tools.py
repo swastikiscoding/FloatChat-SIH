@@ -1,10 +1,14 @@
-from pydantic_ai import Tool
+from pydantic_ai import Tool, WebSearchTool, CodeExecutionTool
+from pydantic_ai.common_tools.tavily import tavily_search_tool
+# https://ai.pydantic.dev/third-party-tools/
 
+from app.schemas.chat import AgentDependencies
 from argopy import DataFetcher as ArgoDataFetcher
 import xarray as xr
 
 import geopandas as gpd
 
+from typing import Callable
 from loguru import logger
 
 def fetch_argo_data(lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max):
@@ -38,28 +42,27 @@ def get_n_nearest_floats(lon, lat, n=1):
     ds = ArgoDataFetcher().float([lon, lat]).to_xarray()
     return ds
 
-def get_sea_bounds(sea_name: str, shapefile_path: str) -> dict:
-    # Load shapefile
-    gdf = gpd.read_file(shapefile_path)
+# def get_sea_bounds(sea_name: str, shapefile_path: str) -> dict:
+#     # Load shapefile
+#     gdf = gpd.read_file(shapefile_path)
 
-    # Case-insensitive search
-    match = gdf[gdf['NAME'].str.lower() == sea_name.lower()]
-    if match.empty:
-        raise ValueError(f"No sea/ocean named '{sea_name}' found in dataset.")
+#     # Case-insensitive search
+#     match = gdf[gdf['NAME'].str.lower() == sea_name.lower()]
+#     if match.empty:
+#         raise ValueError(f"No sea/ocean named '{sea_name}' found in dataset.")
 
-    # Get bounding box of the first match
-    minx, miny, maxx, maxy = match.geometry.iloc[0].bounds
-    return {
-        "lat_min": miny,
-        "lat_max": maxy,
-        "lon_min": minx,
-        "lon_max": maxx,
-    }
+#     # Get bounding box of the first match
+#     minx, miny, maxx, maxy = match.geometry.iloc[0].bounds
+#     return {
+#         "lat_min": miny,
+#         "lat_max": maxy,
+#         "lon_min": minx,
+#         "lon_max": maxx,
+#     }
 
 # Example
 #bounds = get_sea_bounds("Mediterranean Sea", "ne_10m_geography_marine_polys.shp")
 #print(bounds)
-
 
 all_tools: list[Tool] = [
     Tool(fetch_argo_data, takes_ctx=False)
