@@ -8,6 +8,7 @@ import CustomGoogleSignIn from "./components/CustomGoogleSignIn";
 import SSOCallback from "./components/SSOCallback";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Chatbot from "./components/Chatbot/Chatbot.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -32,6 +33,12 @@ const router = createBrowserRouter([
   {
     path: "/sso-callback",
     element: <SSOCallback />,
+  },
+  {
+    path: "/chatbot",
+    element: (
+      <Chatbot />
+    ),
   },
 ]);
 
