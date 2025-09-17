@@ -1,7 +1,6 @@
-from schemas.chat import AgentRequest, AgentResponse
+from app.schemas.chat import AgentRequest, AgentResponse
+from app.services.tools import all_tools
 from pydantic_ai import Agent, RunContext, ModelSettings
-from pydantic import BaseModel, Field
-from tools import all_tools
 from loguru import logger
 from dotenv import load_dotenv
 load_dotenv()
@@ -10,7 +9,7 @@ model_settings = ModelSettings(
     max_tokens=512,
     temperature=0.2,
     top_p=0.95,
-    timeout=30,
+    timeout=120,
     parallel_tool_calls=True,
     seed=42,
     presence_penalty=0.0,
@@ -18,7 +17,7 @@ model_settings = ModelSettings(
     logit_bias={},
     stop_sequences=[],
     extra_headers={},
-    extra_body=None
+    extra_body=None,
 )
 
 agent = Agent(

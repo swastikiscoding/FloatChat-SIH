@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from schemas.chat import AgentRequest, AgentResponse
-from services.chatbot import get_bot_response
+from app.services.chatbot import get_bot_response
 
 router = APIRouter()
 

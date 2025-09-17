@@ -23,4 +23,4 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-start = "uvicorn main:app --reload"
+start = "uvicorn app.main:app --reload"

@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import uvicorn
 from loguru import logger
 
 from contextlib import asynccontextmanager
@@ -29,9 +27,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.api.chat import router
+app.include_router(router, prefix="/chat", tags=["chat"])
+
 @app.get("/")
-async def root():
+def root():
     return {"message": "Welcome to the FloatChat API. Use the /chat endpoint to interact with the AI assistant."}
 
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -20,6 +20,7 @@ def fetch_argo_data(lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, dati
     Returns:
     xarray.Dataset containing the fetched data.
     """
+    logger.info(f"Fetching Argo data for region: lon({lon_min}, {lon_max}), lat({lat_min}, {lat_max}), pres({pres_min}, {pres_max}), datim({datim_min}, {datim_max})")
     ds = ArgoDataFetcher().region([lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]).to_xarray()
     return ds
 
@@ -63,3 +64,8 @@ def get_sea_bounds(sea_name: str, shapefile_path: str) -> dict:
 all_tools: list[Tool] = [
     Tool(fetch_argo_data, takes_ctx=False)
 ]
+
+if __name__ == "__main__":
+    # Example usage
+    ds = fetch_argo_data(-10, 10, 30, 45, 0, 1000, '2011-01', '2011-06')
+    print(ds)
