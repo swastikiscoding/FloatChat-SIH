@@ -3,13 +3,15 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/clerk-react";
-import Features from "./components/landing page/Features";
-import Faq from "./components/landing page/Faq";
-import DevTeam from "./components/landing page/Team";
-import Footer from "./components/landing page/Footer";
-
+import Features from "./components/landing-page/Features";
+import Faq from "./components/landing-page/Faq";
+import DevTeam from "./components/landing-page/Team";
+import Footer from "./components/landing-page/Footer";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./components/landing-page/Navbar";
+import Mainfeatures from "./components/landing-page/Mainfeatures";
+import Mode from "./components/landing-page/Mode";
 
 function App() {
   const navigate = useNavigate();
@@ -29,9 +31,12 @@ function App() {
             <UserButton />
           </SignedIn>
         </header>
+        <Navbar/>
+        <Mainfeatures/>
         <div className="mb-15">
           <Features />
         </div>
+        <Mode/>
         <Faq />
         <DevTeam />
         <Footer />
