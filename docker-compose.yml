@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  node:
+    build: ./nodejs-backend
+    container_name: node-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - FASTAPI_URL=http://fastapi:8000
+    depends_on:
+      - fastapi
+
+  fastapi:
+    build: ./fastapi-backend
+    container_name: fastapi-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - node
