@@ -33,7 +33,7 @@ class ArgoPostgresManager:
                  port: int = 5432,
                  database: str = "argo_data",
                  username: str = "postgres",
-                 password: str = "Swastik@220705"):
+                 password: str = "password"):
         """
         Initialize PostgreSQL connection parameters.
         
