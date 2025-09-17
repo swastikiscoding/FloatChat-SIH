@@ -5,6 +5,8 @@ import xarray as xr
 
 import geopandas as gpd
 
+from loguru import logger
+
 def fetch_argo_data(lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max):
     """
     Fetch Argo data for a specified region and time period.
@@ -21,12 +23,13 @@ def fetch_argo_data(lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, dati
     ds = ArgoDataFetcher().region([lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]).to_xarray()
     return ds
 
-def get_nearest_floats(lon, lat):
+def get_n_nearest_floats(lon, lat, n=1):
     """
     Get the nearest Argo float profiles to a specified location.
     
     Parameters:
     lon, lat: Longitude and Latitude of the target location.
+    n: Number of nearest floats to retrieve.
     
     Returns:
     xarray.Dataset containing the nearest float profiles.
@@ -53,8 +56,8 @@ def get_sea_bounds(sea_name: str, shapefile_path: str) -> dict:
     }
 
 # Example
-bounds = get_sea_bounds("Mediterranean Sea", "ne_10m_geography_marine_polys.shp")
-print(bounds)
+#bounds = get_sea_bounds("Mediterranean Sea", "ne_10m_geography_marine_polys.shp")
+#print(bounds)
 
 
 all_tools: list[Tool] = [
