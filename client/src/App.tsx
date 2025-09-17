@@ -1,7 +1,6 @@
 import {
   SignedIn,
   SignedOut,
-  SignInButton,
   UserButton,
 } from "@clerk/clerk-react";
 import Features from "./components/landing page/Features";
@@ -10,13 +9,21 @@ import DevTeam from "./components/landing page/Team";
 import Footer from "./components/landing page/Footer";
 
 import "./App.css";
+import { useNavigate } from "react-router-dom";
+
 function App() {
+  const navigate = useNavigate();
   return (
     <>
       <div className="main">
         <header>
           <SignedOut>
-            <SignInButton />
+            <button
+              onClick={() => navigate("/google-signin")}
+              style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+            >
+              Sign In
+            </button>
           </SignedOut>
           <SignedIn>
             <UserButton />
