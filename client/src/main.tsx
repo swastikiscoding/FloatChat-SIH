@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./components/Dashboard";
 import CustomGoogleSignIn from "./components/CustomGoogleSignIn";
+import SSOCallback from "./components/SSOCallback";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/google-signin",
     element: <CustomGoogleSignIn />,
+  },
+  {
+    path: "/sso-callback",
+    element: <SSOCallback />,
   },
 ]);
 
