@@ -1,4 +1,6 @@
-from pydantic_ai import Tool#, WebSearchTool, CodeExecutionTool
+from pydantic_ai import Tool, RunContext
+
+#, WebSearchTool, CodeExecutionTool
 #from pydantic_ai.common_tools.tavily import tavily_search_tool
 # https://ai.pydantic.dev/third-party-tools/
 
@@ -63,6 +65,29 @@ def get_n_nearest_floats(lon, lat, n=1):
 # Example
 #bounds = get_sea_bounds("Mediterranean Sea", "ne_10m_geography_marine_polys.shp")
 #print(bounds)
+
+def run_duckdb(ctx: RunContext[AgentDependencies], dataset: str, sql: str) -> str:
+    """Run DuckDB SQL query on the DataFrame.
+
+    Note that the virtual table name used in DuckDB SQL must be `dataset`.
+
+    Args:
+        ctx: Pydantic AI agent RunContext
+        dataset: reference string to the DataFrame
+        sql: the query to be executed using DuckDB
+    """
+    data = ctx.deps.get(dataset)
+    result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
+    # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
+    ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
+    return f'Executed SQL, result is `{ref}`'
+
+
+@analyst_agent.tool
+def display(ctx: RunContext[AnalystAgentDeps], name: str) -> str:
+    """Display at most 5 rows of the dataframe."""
+    dataset = ctx.deps.get(name)
+    return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
 all_tools: list[Tool] = [
     Tool(fetch_argo_data, takes_ctx=False)
