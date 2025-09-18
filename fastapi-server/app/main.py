@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 from sqlalchemy import text
-from db import engine
+from app.db import engine
 from loguru import logger
 
 from contextlib import asynccontextmanager
@@ -41,7 +41,6 @@ def root():
 
 @app.get("/count")
 async def get_count():
-    
     with engine.connect() as conn:
         result = conn.execute(text("SELECT * FROM argo_profiles where latitude = 11.392;"))
         profiles = [profile for profile in result.fetchall()]

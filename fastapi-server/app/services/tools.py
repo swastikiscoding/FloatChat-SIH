@@ -9,11 +9,21 @@ from argopy import DataFetcher as ArgoDataFetcher
 import xarray as xr
 
 import geopandas as gpd
+import pandas as pd
 
 from typing import Callable
 from loguru import logger
 
-def fetch_argo_data(lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max):
+def fetch_argo_data(
+    lon_min: float,
+    lon_max: float,
+    lat_min: float,
+    lat_max: float,
+    pres_min: float,
+    pres_max: float,
+    datim_min: str,
+    datim_max: str
+) -> xr.Dataset:
     """
     Fetch Argo data for a specified region and time period.
     
@@ -66,25 +76,7 @@ def get_n_nearest_floats(lon, lat, n=1):
 #bounds = get_sea_bounds("Mediterranean Sea", "ne_10m_geography_marine_polys.shp")
 #print(bounds)
 
-def run_duckdb(ctx: RunContext[AgentDependencies], dataset: str, sql: str) -> str:
-    """Run DuckDB SQL query on the DataFrame.
-
-    Note that the virtual table name used in DuckDB SQL must be `dataset`.
-
-    Args:
-        ctx: Pydantic AI agent RunContext
-        dataset: reference string to the DataFrame
-        sql: the query to be executed using DuckDB
-    """
-    data = ctx.deps.get(dataset)
-    result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
-    # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
-    ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
-    return f'Executed SQL, result is `{ref}`'
-
-
-@analyst_agent.tool
-def display(ctx: RunContext[AnalystAgentDeps], name: str) -> str:
+def display(ctx: RunContext[AgentDependencies], name: str) -> str:
     """Display at most 5 rows of the dataframe."""
     dataset = ctx.deps.get(name)
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
