@@ -71,14 +71,8 @@ def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
             return ""
 
 def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
-    logger.info(f"Request message: {request.message}")
-    logger.info(f"Request deps: {request.deps}")
-    logger.info(f"Message history: {history}")
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
-    logger.info(f"Raw model response: {response}")
     new_history = response.new_messages()
-    logger.info(f"New message history: {new_history}")
-    logger.info(f"Agent output: {response.output}")
     return response.output, new_history
 
 if __name__ == "__main__":
@@ -86,9 +80,10 @@ if __name__ == "__main__":
     response: AgentResponse
     response, _ = get_bot_response_with_new_history(
         AgentRequest(
-            message="What is the average temperature of the ocean at a depth of 1000 meters?",
+            message="What is the average temperature of the Indian ocean at a depth of 500 meters?",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []
     )
-    print(response.reply)
+    answer: str = response.reply
+    print(answer)
