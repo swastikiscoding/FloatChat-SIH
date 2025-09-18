@@ -4,7 +4,6 @@ from pydantic import BaseModel
 import uvicorn
 from sqlalchemy import text
 from db import engine
-=======
 from loguru import logger
 
 from contextlib import asynccontextmanager
@@ -38,6 +37,7 @@ app.include_router(router, prefix="/chat", tags=["chat"])
 @app.get("/")
 def root():
     return {"message": "Welcome to the FloatChat API. Use the /chat endpoint to interact with the AI assistant."}
+    # The chat endpoint is defined at app.api.chat.router
 
 @app.get("/count")
 async def get_count():

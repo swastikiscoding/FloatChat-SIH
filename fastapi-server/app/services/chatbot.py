@@ -32,6 +32,13 @@ default_sys_prompt = \
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
 """
 
+student_sys_prompt = \
+"""Explain everything you are doing; define all terminologies, provide examples wherever possible. Keep the tone friendly and engaging, and conversations educational.
+"""
+
+researcher_sys_prompt = \
+"""No need to explain basic concepts."""
+
 model = OpenAIChatModel(
     'gpt-4o',
     provider=AzureProvider(
@@ -53,9 +60,13 @@ agent = Agent(
 @agent.system_prompt
 def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
     user_mode = ctx.deps.mode
-    if user_mode == UserMode.STUDENT:
-        return "You are a student studying oceanography."
-    return "You are a researcher studying oceanography."
+    match user_mode:
+        case UserMode.RESEARCHER:
+            return researcher_sys_prompt
+        case UserMode.STUDENT:
+            return student_sys_prompt
+        case UserMode.HYBRID:
+            return ""
 
 def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
