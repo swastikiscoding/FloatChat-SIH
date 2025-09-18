@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import bgImage from "../../assets/bgImage.png"
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
       <div className="min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden"
             style={{backgroundImage:`url(${bgImage})`,backgroundSize: "101vw"}}>
@@ -13,7 +16,12 @@ const Navbar = () => {
               <div className="cursor-pointer">Features</div>
               <div className="cursor-pointer">About Us</div>
             </div>
-            <button className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer">SignIn</button>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <button className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer" onClick={() => navigate("/google-signin")}>SignIn</button>
+            </SignedOut>
           </nav>
           <h1 className="text-4xl sm:text-7xl font-bold mt-15 text-center">
             Dive into the ocean of data..
