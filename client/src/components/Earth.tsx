@@ -245,7 +245,7 @@ export default function Earth({ selectedDate }: EarthProps) {
         ) : (
           <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-600 p-4">
             <div className="text-center text-gray-400">
-              <p className="text-sm">Tap on a profile to see details</p>
+              <p className="text-sm">Tap on a profile to see details.</p>
             </div>
           </div>
         )}
