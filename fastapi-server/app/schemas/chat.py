@@ -10,7 +10,7 @@ class UserMode(Enum):
     RESEARCHER = 2
 
 @dataclass
-class AgentDependencies():
+class AgentDependencies:
     mode: UserMode = field(default_factory=lambda: UserMode.HYBRID, metadata={"description": "Mode of the assistant. Options are HYBRID (0), STUDENT (1), RESEARCHER (2)."})
     output: dict[str, pd.DataFrame] = field(default_factory=dict)
 
