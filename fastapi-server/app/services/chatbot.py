@@ -11,17 +11,6 @@ from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
 
-model_settings = ModelSettings(
-    max_tokens=512,
-    #temperature=0.2,
-    #top_p=0.95,
-    timeout=120,
-    parallel_tool_calls=True,
-    #seed=42,
-    #presence_penalty=0.0,
-    #frequency_penalty=0.0,
-)
-
 default_sys_prompt = \
 """You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
@@ -53,20 +42,8 @@ def test_credentials():
     response = client.chat.completions.create(
         messages=[
             {
-                "role": "system",
-                "content": "You are a helpful assistant.",
-            },
-            {
                 "role": "user",
-                "content": "I am going to Paris, what should I see?",
-            },
-            {
-                "role": "assistant",
-                "content": "Paris, the capital of France, is known for its stunning architecture, art museums, historical landmarks, and romantic atmosphere. Here are some of the top attractions to see in Paris:\n \n 1. The Eiffel Tower: The iconic Eiffel Tower is one of the most recognizable landmarks in the world and offers breathtaking views of the city.\n 2. The Louvre Museum: The Louvre is one of the world's largest and most famous museums, housing an impressive collection of art and artifacts, including the Mona Lisa.\n 3. Notre-Dame Cathedral: This beautiful cathedral is one of the most famous landmarks in Paris and is known for its Gothic architecture and stunning stained glass windows.\n \n These are just a few of the many attractions that Paris has to offer. With so much to see and do, it's no wonder that Paris is one of the most popular tourist destinations in the world.",
-            },
-            {
-                "role": "user",
-                "content": "What is so great about #1?",
+                "content": "What is the capital of France? Answer in one word.",
             }
         ],
         max_completion_tokens=16384,
@@ -79,7 +56,7 @@ agent = Agent(
     model=model,
     deps_type=AgentDependencies,
     output_type=AgentResponse,
-    model_settings=model_settings,
+    #model_settings=model_settings,
     instructions=default_sys_prompt,
     #tools=all_tools,
 )
@@ -107,7 +84,7 @@ def get_bot_response_with_new_history(request: AgentRequest, history: list[Model
     return response.output, new_history
 
 if __name__ == "__main__":
-    test_credentials()
+    #test_credentials()
     response, _ = get_bot_response_with_new_history(
         AgentRequest(
             message="What is the average temperature of the ocean at a depth of 1000 meters?",
