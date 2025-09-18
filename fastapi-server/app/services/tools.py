@@ -5,7 +5,7 @@ from pydantic_ai import Tool, RunContext
 # https://ai.pydantic.dev/third-party-tools/
 
 from app.schemas.chat import AgentDependencies
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy import DataFetcher as ArgopyDataFetcher
 import duckdb
 import xarray as xr
 
@@ -15,42 +15,17 @@ import pandas as pd
 from typing import Callable
 from loguru import logger
 
+fetcher = ArgopyDataFetcher() # Takes ∞ time to initialize, so do it once here
 
-def load_argo_data(
+def load_argo_profile(
     ctx: RunContext[AgentDependencies],
-    mode: str = 'profile',
-    **kwargs
+    profile: int,
+    cyc: int
 ) -> str:
-    """Load Argo data using argopy DataFetcher.
-
-    Args:
-        ctx: Pydantic AI agent RunContext
-        mode: 'profile', 'float', or 'region' (default: 'profile')
-        kwargs: parameters for the DataFetcher (e.g., WMO, box, etc.)
-    """
-    logger.info(f"Loading Argo data with mode={mode}, params={kwargs}")
-
-    fetcher = ArgoDataFetcher()
-    if mode == 'profile':
-        # Example: profile=6902746, cyc=1
-        profile = kwargs.get('profile', 6902746)
-        cyc = kwargs.get('cyc', 1)
-        data = fetcher.profile(profile, cyc).to_xarray()
-        desc = f"Argo profile {profile}, cycle {cyc}"
-    elif mode == 'float':
-        # Example: float=6902746
-        data = fetcher.float(kwargs.get('float', 6902746)).to_xarray()
-        desc = f"Argo float {kwargs.get('float', 6902746)}"
-    elif mode == 'region':
-        # Example: box=[-10, 30, 10, 40]
-        data = fetcher.region(
-            box=kwargs.get('box', [-10, 30, 10, 40])
-        ).to_xarray()
-        desc = f"Argo region {kwargs.get('box', [-10, 30, 10, 40])}"
-    else:
-        raise ValueError(f"Unknown mode: {mode}")
-
-    # Convert to DataFrame for storage
+    """Load Argo data for a specific profile and cycle."""
+    logger.info(f"Loading Argo profile data: profile={profile}, cyc={cyc}")
+    data = fetcher.profile(profile, cyc).to_xarray()
+    desc = f"Argo profile {profile}, cycle {cyc}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
@@ -59,7 +34,54 @@ def load_argo_data(
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
     ]
+    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    return '\n'.join(output)
 
+def load_argo_float(
+    ctx: RunContext[AgentDependencies],
+    float_id: int
+) -> str:
+    """Load Argo data for a specific float."""
+    logger.info(f"Loading Argo float data: float={float_id}")
+    data = fetcher.float(float_id).to_xarray()
+    desc = f"Argo float {float_id}"
+    df = data.to_dataframe().reset_index()
+    ref = ctx.deps.store(df)
+    output = [
+        f'Loaded Argo data as `{ref}`.',
+        f'Description: {desc}',
+        f'Columns: {list(df.columns)}',
+        f'Rows: {len(df)}'
+    ]
+    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    return '\n'.join(output)
+
+def load_argo_region(
+    ctx: RunContext[AgentDependencies],
+    box: list[float | str] # no int!
+) -> str:
+    """Load Argo data for a specific region (box).
+    The box list is made of:
+        lon_min: float, lon_max: float,
+        lat_min: float, lat_max: float,
+        dpt_min: float, dpt_max: float,
+        date_min: str (optional), date_max: str (optional)
+    Longitude, latitude and pressure bounds are required, while the two bounding dates are optional.
+    If bounding dates are not specified, the entire time series is fetched.
+    Eg: [-60.0, -55.0, 40.0, 45.0, 0.0, 10.0, '2007-08-01', '2007-09-01']
+    Eg: [20.0, 146.92, -60.0, 30.0, 0.0, 1000.0]
+    """
+    logger.info(f"Loading Argo region data: box={box}")
+    data = fetcher.region(box).to_xarray()
+    desc = f"Argo region {box}"
+    df = data.to_dataframe().reset_index()
+    ref = ctx.deps.store(df)
+    output = [
+        f'Loaded Argo data as `{ref}`.',
+        f'Description: {desc}',
+        f'Columns: {list(df.columns)}',
+        f'Rows: {len(df)}'
+    ]
     logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
     return '\n'.join(output)
 
@@ -90,7 +112,13 @@ def display(ctx: RunContext[AgentDependencies], name: str) -> str:
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
 
-all_tools = [load_argo_data, run_duckdb, display]
+all_tools = [
+    load_argo_float,
+    load_argo_profile,
+    load_argo_region,
+    run_duckdb,
+    display,
+]
 
 
 if __name__ == "__main__":
