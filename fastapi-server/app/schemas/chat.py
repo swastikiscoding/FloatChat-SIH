@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from dataclasses import dataclass, field
 from enum import Enum
 import pandas as pd
 from pydantic_ai import ModelRetry
@@ -8,9 +9,10 @@ class UserMode(Enum):
     STUDENT = 1
     RESEARCHER = 2
 
-class AgentDependencies(BaseModel):
-    mode: UserMode = Field(..., description="Mode of the assistant. Options are HYBRID (0), STUDENT (1), RESEARCHER (2).")
-    output: dict[str, pd.DataFrame] = Field(default_factory=dict)
+@dataclass
+class AgentDependencies():
+    mode: UserMode = field(default_factory=lambda: UserMode.HYBRID, metadata={"description": "Mode of the assistant. Options are HYBRID (0), STUDENT (1), RESEARCHER (2)."})
+    output: dict[str, pd.DataFrame] = field(default_factory=dict)
 
     def store(self, value: pd.DataFrame) -> str:
         """Store the output in deps and return the reference such as Out[1] to be used by the LLM."""
@@ -26,8 +28,11 @@ class AgentDependencies(BaseModel):
         return self.output[ref]
 
 class AgentRequest(BaseModel):
-    message: str = Field(..., description="User's message to the assistant. Example: 'What is the average temperature of the ocean at a depth of 1000 meters?'")
+    message: str = Field(..., description="User's message to the assistant.")
     deps: AgentDependencies = Field(..., description="Dependencies for the agent.")
+
+    class Config:
+        arbitrary_types_allowed = True # AgentDependencies contains a pd.DataFrame which is not a pydantic type
 
 class AgentResponse(BaseModel):
     reply: str = Field(..., description="Assistant's reply to the user's message.")

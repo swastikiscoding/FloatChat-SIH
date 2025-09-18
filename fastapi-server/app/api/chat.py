@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from schemas.chat import AgentRequest, AgentResponse
+from app.schemas.chat import AgentRequest, AgentResponse
 from app.services.chatbot import get_bot_response_with_new_history
 from pydantic_ai.messages import ModelMessage
 

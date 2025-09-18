@@ -1,31 +1,15 @@
 from app.schemas.chat import AgentRequest, AgentResponse, AgentDependencies, UserMode
 from app.services.tools import all_tools
-from typing import cast
-from pydantic_ai.tools import Tool
 from pydantic_ai import Agent, ModelSettings, RunContext
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.azure import AzureProvider
 from pydantic_ai.run import AgentRunResult
 from pydantic_ai.messages import ModelMessage
 from loguru import logger
+from openai import AzureOpenAI
 from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
-
-model_settings = ModelSettings(
-    max_tokens=512,
-    temperature=0.2,
-    top_p=0.95,
-    timeout=120,
-    parallel_tool_calls=True,
-    seed=42,
-    presence_penalty=0.0,
-    frequency_penalty=0.0,
-    logit_bias={},
-    stop_sequences=[],
-    extra_headers={},
-    extra_body=None,
-)
 
 default_sys_prompt = \
 """You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
@@ -40,21 +24,41 @@ researcher_sys_prompt = \
 """No need to explain basic concepts."""
 
 model = OpenAIChatModel(
-    'gpt-4o',
+    getenv('MODEL_NAME', 'gpt-5-nano'),
     provider=AzureProvider(
-        azure_endpoint=getenv('AZURE_OPENAI_ENDPOINT', 'https://your-endpoint.openai.azure.com/'),
-        api_version=getenv('AZURE_API_VERSION', 'your-api-version'),
-        api_key=getenv('AZURE_API_KEY', 'your-api-key'),
+        azure_endpoint=getenv('AZURE_ENDPOINT'),
+        api_version=getenv('AZURE_API_VERSION'),
+        api_key=getenv('AZURE_API_KEY'),
     ),
 )
+
+def test_credentials():
+    client = AzureOpenAI(
+        api_version=getenv('AZURE_API_VERSION'),
+        azure_endpoint=getenv('AZURE_ENDPOINT', ''),
+        api_key=getenv('AZURE_API_KEY'),
+    )
+
+    response = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": "What is the capital of France? Answer in one word.",
+            }
+        ],
+        max_completion_tokens=16384,
+        model=getenv('MODEL_NAME', 'gpt-5-nano')
+    )
+
+    print(response.choices[0].message.content)
 
 agent = Agent(
     model=model,
     deps_type=AgentDependencies,
     output_type=AgentResponse,
-    model_settings=model_settings,
+    #model_settings=model_settings,
     instructions=default_sys_prompt,
-    tools=[cast(Tool[AgentDependencies], tool) for tool in all_tools], # I have no idea what I am doing.
+    #tools=all_tools,
 )
 
 @agent.system_prompt
@@ -69,11 +73,18 @@ def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
             return ""
 
 def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
+    logger.info(f"Request message: {request.message}")
+    logger.info(f"Request deps: {request.deps}")
+    logger.info(f"Message history: {history}")
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
+    logger.info(f"Raw model response: {response}")
     new_history = response.new_messages()
+    logger.info(f"New message history: {new_history}")
+    logger.info(f"Agent output: {response.output}")
     return response.output, new_history
 
 if __name__ == "__main__":
+    #test_credentials()
     response, _ = get_bot_response_with_new_history(
         AgentRequest(
             message="What is the average temperature of the ocean at a depth of 1000 meters?",

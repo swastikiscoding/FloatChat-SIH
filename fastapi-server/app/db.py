@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import os
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
+from loguru import logger
 
 load_dotenv()
 
