@@ -6,6 +6,7 @@ from pydantic_ai import Tool, RunContext
 
 from app.schemas.chat import AgentDependencies
 from argopy import DataFetcher as ArgoDataFetcher
+import duckdb
 import xarray as xr
 
 import geopandas as gpd
@@ -14,78 +15,83 @@ import pandas as pd
 from typing import Callable
 from loguru import logger
 
-def fetch_argo_data(
-    lon_min: float,
-    lon_max: float,
-    lat_min: float,
-    lat_max: float,
-    pres_min: float,
-    pres_max: float,
-    datim_min: str,
-    datim_max: str
-) -> xr.Dataset:
+
+def load_argo_data(
+    ctx: RunContext[AgentDependencies],
+    mode: str = 'profile',
+    **kwargs
+) -> str:
+    """Load Argo data using argopy DataFetcher.
+
+    Args:
+        ctx: Pydantic AI agent RunContext
+        mode: 'profile', 'float', or 'region' (default: 'profile')
+        kwargs: parameters for the DataFetcher (e.g., WMO, box, etc.)
     """
-    Fetch Argo data for a specified region and time period.
-    
-    Parameters:
-    lon_min, lon_max: Longitude bounds
-    lat_min, lat_max: Latitude bounds
-    pres_min, pres_max: Pressure bounds
-    datim_min, datim_max: Date-time bounds (e.g., '2011-01', '2011-06')
-    
-    Returns:
-    xarray.Dataset containing the fetched data.
+    logger.info(f"Loading Argo data with mode={mode}, params={kwargs}")
+
+    fetcher = ArgoDataFetcher()
+    if mode == 'profile':
+        # Example: profile=6902746, cyc=1
+        profile = kwargs.get('profile', 6902746)
+        cyc = kwargs.get('cyc', 1)
+        data = fetcher.profile(profile, cyc).to_xarray()
+        desc = f"Argo profile {profile}, cycle {cyc}"
+    elif mode == 'float':
+        # Example: float=6902746
+        data = fetcher.float(kwargs.get('float', 6902746)).to_xarray()
+        desc = f"Argo float {kwargs.get('float', 6902746)}"
+    elif mode == 'region':
+        # Example: box=[-10, 30, 10, 40]
+        data = fetcher.region(
+            box=kwargs.get('box', [-10, 30, 10, 40])
+        ).to_xarray()
+        desc = f"Argo region {kwargs.get('box', [-10, 30, 10, 40])}"
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+
+    # Convert to DataFrame for storage
+    df = data.to_dataframe().reset_index()
+    ref = ctx.deps.store(df)
+    output = [
+        f'Loaded Argo data as `{ref}`.',
+        f'Description: {desc}',
+        f'Columns: {list(df.columns)}',
+        f'Rows: {len(df)}'
+    ]
+
+    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    return '\n'.join(output)
+
+
+def run_duckdb(ctx: RunContext[AgentDependencies], dataset: str, sql: str) -> str:
+    """Run DuckDB SQL query on the DataFrame.
+
+    Note that the virtual table name used in DuckDB SQL must be `dataset`.
+
+    Args:
+        ctx: Pydantic AI agent RunContext
+        dataset: reference string to the DataFrame
+        sql: the query to be executed using DuckDB
     """
-    logger.info(f"Fetching Argo data for region: lon({lon_min}, {lon_max}), lat({lat_min}, {lat_max}), pres({pres_min}, {pres_max}), datim({datim_min}, {datim_max})")
-    ds = ArgoDataFetcher().region([lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]).to_xarray()
-    return ds
+    logger.info(f"Running DuckDB SQL on dataset={dataset}, sql={sql}")
+    data = ctx.deps.get(dataset)
+    result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
+    # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
+    ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
+    logger.info(f"DuckDB query result stored as {ref}, rows={len(result.df())}")  # pyright: ignore[reportUnknownMemberType]
+    return f'Executed SQL, result is `{ref}`'
 
-def get_n_nearest_floats(lon, lat, n=1):
-    """
-    Get the nearest Argo float profiles to a specified location.
-    
-    Parameters:
-    lon, lat: Longitude and Latitude of the target location.
-    n: Number of nearest floats to retrieve.
-    
-    Returns:
-    xarray.Dataset containing the nearest float profiles.
-    """
-    ds = ArgoDataFetcher().float([lon, lat]).to_xarray()
-    return ds
-
-# def get_sea_bounds(sea_name: str, shapefile_path: str) -> dict:
-#     # Load shapefile
-#     gdf = gpd.read_file(shapefile_path)
-
-#     # Case-insensitive search
-#     match = gdf[gdf['NAME'].str.lower() == sea_name.lower()]
-#     if match.empty:
-#         raise ValueError(f"No sea/ocean named '{sea_name}' found in dataset.")
-
-#     # Get bounding box of the first match
-#     minx, miny, maxx, maxy = match.geometry.iloc[0].bounds
-#     return {
-#         "lat_min": miny,
-#         "lat_max": maxy,
-#         "lon_min": minx,
-#         "lon_max": maxx,
-#     }
-
-# Example
-#bounds = get_sea_bounds("Mediterranean Sea", "ne_10m_geography_marine_polys.shp")
-#print(bounds)
 
 def display(ctx: RunContext[AgentDependencies], name: str) -> str:
     """Display at most 5 rows of the dataframe."""
+    logger.info(f"Displaying dataset={name}")
     dataset = ctx.deps.get(name)
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
-all_tools: list[Tool] = [
-    Tool(fetch_argo_data, takes_ctx=False)
-]
+
+all_tools = [load_argo_data, run_duckdb, display]
+
 
 if __name__ == "__main__":
-    # Example usage
-    ds = fetch_argo_data(-10, 10, 30, 45, 0, 1000, '2011-01', '2011-06')
-    print(ds)
+    pass

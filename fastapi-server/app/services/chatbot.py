@@ -17,7 +17,8 @@ When outputting any data or answering any queries, ensure that you always cite t
 """
 
 student_sys_prompt = \
-"""Explain everything you are doing; define all terminologies, provide examples wherever possible. Keep the tone friendly and engaging, and conversations educational.
+"""Explain everything you are doing; define all terminologies, provide examples for concepts wherever possible.
+Keep the tone friendly and engaging, and conversations educational.
 """
 
 researcher_sys_prompt = \
@@ -38,7 +39,6 @@ def test_credentials():
         azure_endpoint=getenv('AZURE_ENDPOINT', ''),
         api_key=getenv('AZURE_API_KEY'),
     )
-
     response = client.chat.completions.create(
         messages=[
             {
@@ -49,16 +49,14 @@ def test_credentials():
         max_completion_tokens=16384,
         model=getenv('MODEL_NAME', 'gpt-5-nano')
     )
-
     print(response.choices[0].message.content)
 
 agent = Agent(
     model=model,
     deps_type=AgentDependencies,
     output_type=AgentResponse,
-    #model_settings=model_settings,
     instructions=default_sys_prompt,
-    #tools=all_tools,
+    tools=all_tools,
 )
 
 @agent.system_prompt
@@ -85,6 +83,7 @@ def get_bot_response_with_new_history(request: AgentRequest, history: list[Model
 
 if __name__ == "__main__":
     #test_credentials()
+    response: AgentResponse
     response, _ = get_bot_response_with_new_history(
         AgentRequest(
             message="What is the average temperature of the ocean at a depth of 1000 meters?",
@@ -92,4 +91,4 @@ if __name__ == "__main__":
         ),
         []
     )
-    print(response)
+    print(response.reply)
