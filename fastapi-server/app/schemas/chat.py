@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import pandas as pd
 from pydantic_ai import ModelRetry
+#from argopy import DataFetcher as ArgopyDataFetcher
 
 class UserMode(Enum):
     HYBRID = 0
@@ -11,6 +12,7 @@ class UserMode(Enum):
 
 @dataclass
 class AgentDependencies:
+    #argo_fetcher: 'ArgopyDataFetcher' = field(default_factory=lambda: ArgopyDataFetcher(), metadata={"description": "Argopy DataFetcher instance for loading Argo data."})
     mode: UserMode = field(default_factory=lambda: UserMode.HYBRID, metadata={"description": "Mode of the assistant. Options are HYBRID (0), STUDENT (1), RESEARCHER (2)."})
     output: dict[str, pd.DataFrame] = field(default_factory=dict)
 
