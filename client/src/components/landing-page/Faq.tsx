@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react"; 
+import { ChevronDown } from "lucide-react"; 
+import { motion, AnimatePresence } from 'framer-motion';
 
 type FAQItem = {
   id: number;
@@ -46,47 +47,79 @@ const FAQ: React.FC = () => {
   const toggleFAQ = (id: number) => {
     setOpenId(openId === id ? null : id);
   };
+  const contentVariants = {
+  closed: { opacity: 0, height: 0, y: -10, transition: { duration: 0.3 } },
+  open: { opacity: 1, height: "auto", y: 0, transition: { duration: 0.4 } },
+};
 
-  return (
-    <div className="bg-black text-white py-10 px-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-2">Everything You Need To Know</h1>
-      <p className="text-center text-gray-400 mb-10">FAQs</p>
+const iconVariants = {
+  closed: { rotate: 0 },
+  open: { rotate: 180 },
+};
 
-      <div className="space-y-6">
-        {faqs.map((faq) => (
-          <div
-            key={faq.id}
-            className="border-b border-gray-700 pb-4 cursor-pointer"
-            onClick={() => toggleFAQ(faq.id)}
-          >
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <span className="text-cyan-400 font-semibold">
-                  {faq.id.toString().padStart(2, "0")}
-                </span>
-                <span
-                  className={`font-semibold ${
-                    openId === faq.id ? "text-cyan-400" : "text-white"
-                  }`}
-                >
-                  {faq.question}
-                </span>
-              </div>
-              {openId === faq.id ? (
-                <ChevronUp className="text-cyan-400" />
-              ) : (
-                <ChevronDown className="text-gray-400" />
-              )}
+ return (
+  <div className="bg-black text-white py-10 px-4 max-w-3xl mx-auto">
+    <h1 className="text-3xl font-bold text-center mb-2">
+      Everything You Need To Know
+    </h1>
+    <p className="text-center text-gray-400 mb-10">FAQs</p>
+
+    <div className="space-y-6">
+      {faqs.map((faq) => (
+        <motion.div
+          key={faq.id}
+          className="border-b border-gray-700 pb-4 cursor-pointer rounded-lg"
+          onClick={() => toggleFAQ(faq.id)}
+          whileHover={{ scale: 1.01, backgroundColor: "#1a202c" }}
+          transition={{ type: "spring", stiffness: 250, damping: 20 }}
+        >
+          <div className="flex justify-between items-center p-2.5 ">
+            <div className="flex items-center gap-3">
+              <span className="text-cyan-400 font-semibold">
+                {faq.id.toString().padStart(2, "0")}
+              </span>
+              <span
+                className={`font-semibold transition-colors ${
+                  openId === faq.id ? "text-cyan-400" : "text-white"
+                }`}
+              >
+                {faq.question}
+              </span>
             </div>
 
-            {openId === faq.id && (
-              <p className="mt-3 text-gray-300 text-sm">{faq.answer}</p>
-            )}
+            {/* Smooth icon rotation */}
+            <motion.div
+              variants={iconVariants}
+              animate={openId === faq.id ? "open" : "closed"}
+              transition={{ duration: 0.3 }}
+            >
+              <ChevronDown
+                className={`${
+                  openId === faq.id ? "text-cyan-400" : "text-gray-400"
+                }`}
+              />
+            </motion.div>
           </div>
-        ))}
-      </div>
+
+          {/* Answer animation */}
+          <AnimatePresence initial={false}>
+            {openId === faq.id && (
+              <motion.div
+                variants={contentVariants}
+                initial="closed"
+                animate="open"
+                exit="closed"
+                className="overflow-hidden"
+              >
+                <p className="mt-3 pl-2.5 text-gray-300 text-sm">{faq.answer}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      ))}
     </div>
-  );
+  </div>
+);
 };
 
 export default FAQ;
