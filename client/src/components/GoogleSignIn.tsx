@@ -34,10 +34,6 @@ export default function GoogleSignInButton() {
             </div>
           </button>
         </div>
-        <div className="mt-4 pl-4 text-[#FFFFFF]">
-          <span className="text-gray-200">Don't have an account sign?</span>
-          <span className="text-blue-300 ml-2">Sign Up</span>
-        </div>
       </div>
     </div>
   );
