@@ -15,7 +15,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="bg-gray-950">
         {/* Logo button */}
-        <button className="flex items-center px-2 pt-2">
+        <button className="flex items-center px-0 pt-2 ml-1 mt-1">
           <Shell className="w-6 h-6 text-cyan-400" />
           <span className="text-2xl pl-3 group-data-[collapsible=icon]:hidden"> {/*hides*/}
             FloatChat

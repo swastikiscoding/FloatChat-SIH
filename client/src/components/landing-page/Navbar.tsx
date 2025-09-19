@@ -1,5 +1,5 @@
 import { Waves } from "../ui/waves-background"
-
+import icon from "../../../public/favicon.svg"
 import { useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 const Navbar = () => {
@@ -13,7 +13,7 @@ const Navbar = () => {
           <div className="relative z-10 p-8">
             <nav className="flex  justify-between pt-5 pl-8 pr-8">
             <div className="flex gap-2 items-center">
-              <span className="text-cyan-600 text-2xl">🌊</span>
+              <img src={icon} alt="Icon" className="w-8 h-8"/>
               <div className="font-semibold text-xl ">FloatChat</div>
             </div>
             <div className=" hidden sm:flex text-white gap-8 pl-4 pr-4 pt-1 pb-1 rounded-2xl border-cyan-600 border-2">

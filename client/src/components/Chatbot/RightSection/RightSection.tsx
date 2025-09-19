@@ -3,7 +3,7 @@ import RightBottom from './RightBottom'
 
 const RightSection = () => {
   return (
-    <main className="w-full bg-gray-950 border border-white/30 rounded-2xl my-2 mr-4 flex flex-col">
+    <main className="w-full h-[calc(100vh-1.5rem)] bg-gray-950 border border-white/30 rounded-2xl my-3 mr-4 flex flex-col">
       <RightTop/>
       <RightBottom/>
     </main>
