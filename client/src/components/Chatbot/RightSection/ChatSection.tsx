@@ -1,4 +1,3 @@
-import React from 'react'
 import BotReply from './BotReply'
 import UserQuerry from './UserQuerry'
 

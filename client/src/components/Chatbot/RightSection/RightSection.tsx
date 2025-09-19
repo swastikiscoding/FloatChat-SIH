@@ -1,4 +1,3 @@
-import React from 'react'
 import RightTop from './RightTop'
 import RightBottom from './RightBottom'
 

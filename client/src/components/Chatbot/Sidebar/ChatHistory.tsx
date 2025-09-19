@@ -1,5 +1,4 @@
-import React from 'react'
-
+// history kee array 
 const chats = [
   { title: 'Dummy chat 1 complain' },
   { title: 'Tell me Ocean temperature' },

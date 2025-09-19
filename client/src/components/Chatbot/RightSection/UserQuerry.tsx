@@ -1,4 +1,3 @@
-
 const UserQuerry = (  { Text }: { Text: string } ) => {
   return (
     <div className='flex justify-end'>
