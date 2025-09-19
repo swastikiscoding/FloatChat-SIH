@@ -14,8 +14,8 @@ const features=[
 ];  
 const Mainfeatures = () => {
   return (
-    <div className=" text-white pb-16 px-6">
-      <div className="sm:w-[80vw] mx-auto bg-black rounded-2xl p-10 pt-0">
+    <div className="bg-black text-white py-16 px-6">
+      <div className="sm:w-[80vw] mx-auto bg-black rounded-2xl p-10">
         <h2 className="text-3xl font-bold text-center mb-8">Explore the Ocean with Intelligent Search</h2>
         <h2 className="font-extralight text-center mb-10">Type your query, and let AI fetch data, maps, and visualizations instantly</h2>
         
