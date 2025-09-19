@@ -38,7 +38,7 @@ const floatAnim = {
 function Features() {
   return (
     <div>
-      <div className="flex items-center justify-center text-white text-3xl font-bold">
+      <div className="flex items-center justify-center text-white text-3xl font-bold pb-5">
         AI Features
       </div>
 
@@ -58,7 +58,7 @@ function Features() {
             <div className="font-semibold text-2xl mb-3">
               Natural Query System
             </div>
-            <div className="text-sm font-extralight text-gray-400 mb-3">
+            <div className="text-sm font-extralight text-gray-400 mb-5">
               Converse With Ocean Data and get instant, intelligent answers.
             </div>
             <motion.ul className="list-none" variants={container}>
@@ -109,8 +109,8 @@ function Features() {
             <div className="font-semibold text-2xl mb-3">
               Virtual Insights and Graphs
             </div>
-            <div className="text-sm text-gray-400 font-extralight mb-3">
-              Brings your queries to life with auto-generated graphs, maps, and
+            <div className="text-sm text-gray-400 font-extralight mb-5">
+              Brings your queries to life with auto-generated graphs, maps, and <br />
               profiles — making patterns.
             </div>
             <motion.ul className="list-none" variants={container}>
