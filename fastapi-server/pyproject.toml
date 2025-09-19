@@ -21,6 +21,7 @@ dependencies = [
     "psycopg2>=2.9.10",
     "psycopg>=3.2.10",
     "duckdb>=1.4.0",
+    "matplotlib>=3.10.6",
 ]
 
 [dependency-groups]

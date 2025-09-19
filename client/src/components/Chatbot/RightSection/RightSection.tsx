@@ -1,14 +1,12 @@
-import ChatSection from './ChatSection'
-import InputSection from './InputSection'
+import RightTop from './RightTop'
+import RightBottom from './RightBottom'
 
 const RightSection = () => {
   return (
-    <div className="w-4/5 h-full">
-      <main className='bg-gray-950 h-full flex flex-col items-center mx-30'>
-        <ChatSection />
-        <InputSection/>
-      </main>
-    </div>
+    <main className="w-full h-[calc(100vh-1.5rem)] bg-gray-950 border border-white/30 rounded-2xl my-3 mr-4 flex flex-col">
+      <RightTop/>
+      <RightBottom/>
+    </main>
   )
 }
 

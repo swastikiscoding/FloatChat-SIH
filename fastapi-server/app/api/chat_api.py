@@ -6,5 +6,5 @@ from pydantic_ai.messages import ModelMessage
 router = APIRouter()
 
 @router.post("/", response_model=AgentResponse)
-def chat_endpoint(request: AgentRequest, history: list[ModelMessage] = []):
+def chat_endpoint(request: AgentRequest, history: list[ModelMessage] = []) -> tuple[AgentResponse, list[ModelMessage]]:
     return get_bot_response_with_new_history(request, history)

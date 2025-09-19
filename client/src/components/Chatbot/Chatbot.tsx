@@ -1,13 +1,13 @@
-import Sidebar from './SideBar/Sidebar'
-import RightSection from './RightSection/RightSection'
+import { SidebarProvider} from "@/components/ui/sidebar"
+import RightSection from "./RightSection/RightSection"
+import { AppSidebar } from "./Sidebar/app-sidebar"
+// import "./Chatbot.css"
 
-const Chatbot = () => {
+export default function Chatbot() {
   return (
-    <div className='flex bg-gray-950 h-screen text-white'> 
-      <Sidebar/>
+    <SidebarProvider>
+      <AppSidebar/>
       <RightSection/>
-    </div>
+    </SidebarProvider>
   )
 }
-
-export default Chatbot

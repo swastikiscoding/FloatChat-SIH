@@ -1,9 +1,24 @@
 import { Waves } from "../ui/waves-background"
 import { motion } from "framer-motion";
+import icon from "../../../public/favicon.svg"
+
 import { useNavigate } from "react-router-dom";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+
+import { SignedIn, SignedOut, UserButton,useAuth } from "@clerk/clerk-react";
+
+
 const Navbar = () => {
   const navigate = useNavigate();
+  const {isSignedIn}=useAuth()
+
+  const handleclick=()=>{
+    if (isSignedIn) {
+      navigate("/Chatbot");  
+    } else {
+      navigate("/google-signin"); 
+    }
+  }
+
   return (
       <div className="relative min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden">
           <div className="absolute inset-0 z-0 ">
@@ -22,6 +37,7 @@ const Navbar = () => {
             whileHover={{ scale: 1.1 }}
           >
               <span className="text-cyan-600 text-2xl">🌊</span>
+
               <div className="font-semibold text-xl ">FloatChat</div>
             </motion.div>
             <motion.div 
@@ -77,8 +93,10 @@ const Navbar = () => {
             Start Chatting
           </motion.button>
         </motion.div>
+
           </div>
       </div>
+    </div>
   )
 }
 

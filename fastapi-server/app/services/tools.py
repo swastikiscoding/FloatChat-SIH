@@ -15,6 +15,10 @@ import pandas as pd
 from typing import Callable
 from loguru import logger
 
+import matplotlib.pyplot as plt
+import io
+import base64
+
 
 fetcher = ArgopyDataFetcher(
     mode='standard', # Default, but it's good to be explicit
@@ -41,7 +45,7 @@ def load_argo_profile(
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
-        f'Loaded Argo data as `{ref}`.',
+        f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
@@ -65,7 +69,7 @@ def load_argo_float(
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
-        f'Loaded Argo data as `{ref}`.',
+        f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
@@ -74,7 +78,7 @@ def load_argo_float(
     return '\n'.join(output)
 
 
-def load_argo_region( # Takes very long when not provided with bounding dates, I think? For the example it was pretty fast.
+def load_argo_region(
     ctx: RunContext[AgentDependencies],
     lon: list[float],
     lat: list[float],
@@ -103,7 +107,7 @@ def load_argo_region( # Takes very long when not provided with bounding dates, I
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
-        f'Loaded Argo data as `{ref}`.',
+        f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
@@ -112,40 +116,98 @@ def load_argo_region( # Takes very long when not provided with bounding dates, I
     return '\n'.join(output)
 
 
-def run_duckdb(ctx: RunContext[AgentDependencies], dataset: str, sql: str) -> str:
+def run_duckdb(
+    ctx: RunContext[AgentDependencies],
+    dataset_ref: str,
+    sql: str
+) -> str:
     """Run DuckDB SQL query on the DataFrame.
-
-    Note that the virtual table name used in DuckDB SQL must be `dataset`.
-
     Args:
         ctx: Pydantic AI agent RunContext
-        dataset: reference string to the DataFrame
+        dataset_ref: reference string, which refers to the DataFrame
         sql: the query to be executed using DuckDB
     """
-    logger.info(f"Running DuckDB SQL on dataset={dataset}, sql={sql}")
-    data = ctx.deps.get(dataset)
+    logger.info(f"Running DuckDB SQL on dataset={dataset_ref}, sql={sql}")
+    data = ctx.deps.get(dataset_ref)
     result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
     # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
     ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
+    output = [
+        f'Executed SQL query and stored result inside reference `{ref}`.',
+    ]
     logger.info(f"DuckDB query result stored as {ref}, rows={len(result.df())}")  # pyright: ignore[reportUnknownMemberType]
-    return f'Executed SQL, result is `{ref}`'
+    return '\n'.join(output)
 
 
-def display(ctx: RunContext[AgentDependencies], name: str) -> str:
-    """Display at most 5 rows of the dataframe."""
-    logger.info(f"Displaying dataset={name}")
-    dataset = ctx.deps.get(name)
+def get_sample_rows(
+    ctx: RunContext[AgentDependencies],
+    dataset_ref: str
+) -> str:
+    """Display at most 5 rows of the dataframe stored in dataset_ref.
+    Args:
+        ctx: Pydantic AI agent RunContext
+        dataset_ref: reference string to the DataFrame
+    """
+    logger.info(f"Displaying dataset={dataset_ref}")
+    dataset = ctx.deps.get(dataset_ref)
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
 
+def plot_saved_data(
+    ctx: RunContext[AgentDependencies],
+    name: str,
+    x: str,
+    y: str,
+    kind: str = "line",
+    title: str | None = None
+) -> None:
+    """Plot saved data to show to the user using matplotlib.
+    Args:
+        ctx: Pydantic AI agent RunContext
+        name: reference string to the DataFrame
+        x: column name for x-axis
+        y: column name for y-axis
+        kind: plot type ('line', 'scatter', 'bar')
+        title: optional plot title
+    Returns:
+        Nothing.
+        The Base64-encoded PNG image string is stored in memory to be retrieved later.
+    """
+    logger.info(f"Plotting data: dataset={name}, x={x}, y={y}, kind={kind}")
+    df = ctx.deps.get(name)
+    fig, ax = plt.subplots()
+    if kind == "line":
+        ax.plot(df[x], df[y])
+    elif kind == "scatter":
+        ax.scatter(df[x], df[y])
+    elif kind == "bar":
+        ax.bar(df[x], df[y])
+    else:
+        raise ValueError(f"Unsupported plot kind: {kind}")
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    if title:
+        ax.set_title(title)
+    buf = io.BytesIO()
+    plt.tight_layout()
+    plt.savefig(buf, format="png")
+    plt.close(fig)
+    buf.seek(0)
+    img_b64 = base64.b64encode(buf.read()).decode("utf-8")
+    logger.info(f"Plotted data for {name} as base64 PNG.")
+    plt_str = f"data:image/png;base64,{img_b64}"
+    #return f"data:image/png;base64,{img_b64}" LETS NOT BLOW UP AI CREDITS
+
+
 all_tools = [
-    load_argo_float,
-    load_argo_profile,
-    load_argo_region,
-    run_duckdb,
-    display,
+    Tool(load_argo_float, sequential=True),
+    Tool(load_argo_profile, sequential=True),
+    Tool(load_argo_region, sequential=True),
+    Tool(run_duckdb, sequential=True),
+    Tool(get_sample_rows, sequential=True),
+    #Tool(plot_saved_data, sequential=True), # don't trust the AI to use this just yet
 ]
 
 
 if __name__ == "__main__":
-    pass
+    print(all_tools[0])
