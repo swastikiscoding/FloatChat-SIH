@@ -23,8 +23,8 @@ const Navbar = () => {
             <Waves/>
           </div>
 
-          <div className="relative z-10 p-8">
-            <nav className="flex  justify-between pt-5 pl-8 pr-8">
+          <div className="relative z-10">
+            <nav className="flex justify-between pt-5 pl-8 pr-8">
             <div className="flex gap-2 items-center">
               <span className="text-cyan-600 text-2xl">🌊</span>
               <div className="font-semibold text-xl ">FloatChat</div>
@@ -51,7 +51,7 @@ const Navbar = () => {
               <button className="bg-[#095268] hover:bg-sky-700 font-semibold pl-6 pr-6 pt-2 pb-2 text-2xl rounded-2xl text-center cursor-pointer" onClick={() => handleclick()}>Start Chatting</button>
           </div>
       </div>
-      </div>
+    </div>
   )
 }
 
