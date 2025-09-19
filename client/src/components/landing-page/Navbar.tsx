@@ -1,7 +1,6 @@
 import { Waves } from "../ui/waves-background"
 
 import { useNavigate } from "react-router-dom";
-import bgImage from "../../assets/bgImage.png"
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 const Navbar = () => {
   const navigate = useNavigate();
@@ -22,7 +21,6 @@ const Navbar = () => {
               <div className="cursor-pointer">Features</div>
               <div className="cursor-pointer">About Us</div>
             </div>
-            <button className="bg-cyan-600 font-semibold pl-4 pr-4 rounded-2xl cursor-pointer">SignIn</button>
             <SignedIn>
               <UserButton />
             </SignedIn>
