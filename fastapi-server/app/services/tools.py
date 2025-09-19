@@ -15,6 +15,10 @@ import pandas as pd
 from typing import Callable
 from loguru import logger
 
+import matplotlib.pyplot as plt
+import io
+import base64
+
 
 fetcher = ArgopyDataFetcher(
     mode='standard', # Default, but it's good to be explicit
@@ -74,7 +78,7 @@ def load_argo_float(
     return '\n'.join(output)
 
 
-def load_argo_region( # Takes very long when not provided with bounding dates, I think? For the example it was pretty fast.
+def load_argo_region(
     ctx: RunContext[AgentDependencies],
     lon: list[float],
     lat: list[float],
@@ -131,11 +135,56 @@ def run_duckdb(ctx: RunContext[AgentDependencies], dataset: str, sql: str) -> st
     return f'Executed SQL, result is `{ref}`'
 
 
-def display(ctx: RunContext[AgentDependencies], name: str) -> str:
+def get_sample_rows(ctx: RunContext[AgentDependencies], name: str) -> str:
     """Display at most 5 rows of the dataframe."""
     logger.info(f"Displaying dataset={name}")
     dataset = ctx.deps.get(name)
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
+
+
+def plot_saved_data(
+    ctx: RunContext[AgentDependencies],
+    name: str,
+    x: str,
+    y: str,
+    kind: str = "line",
+    title: str | None = None
+) -> None:
+    """Plot saved data to show to the user using matplotlib.
+    Args:
+        ctx: Pydantic AI agent RunContext
+        name: reference string to the DataFrame
+        x: column name for x-axis
+        y: column name for y-axis
+        kind: plot type ('line', 'scatter', 'bar')
+        title: optional plot title
+    Returns:
+        Nothing.
+        The Base64-encoded PNG image string is stored in memory to be retrieved later.
+    """
+    logger.info(f"Plotting data: dataset={name}, x={x}, y={y}, kind={kind}")
+    df = ctx.deps.get(name)
+    fig, ax = plt.subplots()
+    if kind == "line":
+        ax.plot(df[x], df[y])
+    elif kind == "scatter":
+        ax.scatter(df[x], df[y])
+    elif kind == "bar":
+        ax.bar(df[x], df[y])
+    else:
+        raise ValueError(f"Unsupported plot kind: {kind}")
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    if title:
+        ax.set_title(title)
+    buf = io.BytesIO()
+    plt.tight_layout()
+    plt.savefig(buf, format="png")
+    plt.close(fig)
+    buf.seek(0)
+    img_b64 = base64.b64encode(buf.read()).decode("utf-8")
+    logger.info(f"Plotted data for {name} as base64 PNG.")
+    #return f"data:image/png;base64,{img_b64}" LETS NOT BLOW UP AI CREDITS
 
 
 all_tools = [
@@ -143,7 +192,8 @@ all_tools = [
     load_argo_profile,
     load_argo_region,
     run_duckdb,
-    display,
+    get_sample_rows,
+    #plot_saved_data, # don't trust the AI to use this just yet
 ]
 
 
