@@ -10,17 +10,15 @@ import Mode from "./components/landing-page/Mode";
 function App() {
   return (
     <>
-      <div className="main">
-        <Navbar/>
-        <Mainfeatures/>
-        <div className="mb-15">
-          <Features />
-        </div>
-        <Mode/>
-        <Faq />
-        <DevTeam />
-        <Footer />
+      <Navbar />
+      <Mainfeatures />
+      <div className="mb-15">
+        <Features />
       </div>
+      <Mode />
+      <Faq />
+      <DevTeam />
+      <Footer />
     </>
   );
 }
