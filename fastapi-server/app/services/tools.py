@@ -188,12 +188,12 @@ def plot_saved_data(
 
 
 all_tools = [
-    load_argo_float,
-    load_argo_profile,
-    load_argo_region,
-    run_duckdb,
-    get_sample_rows,
-    #plot_saved_data, # don't trust the AI to use this just yet
+    Tool(load_argo_float, sequential=True),
+    Tool(load_argo_profile, sequential=True),
+    Tool(load_argo_region, sequential=True),
+    Tool(run_duckdb, sequential=True),
+    Tool(get_sample_rows, sequential=True),
+    #Tool(plot_saved_data, sequential=True), # don't trust the AI to use this just yet
 ]
 
 
