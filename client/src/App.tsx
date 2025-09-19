@@ -10,6 +10,21 @@ import Mode from "./components/landing-page/Mode";
 function App() {
   return (
     <>
+      {/* <Waves/> */}
+      <div className="main bg-black">
+        <header>
+          <SignedOut>
+            <button
+              onClick={() => navigate("/google-signin")}
+              style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+            >
+              Sign In
+            </button>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </header>
       <div className="main">
         
         <Navbar/>
