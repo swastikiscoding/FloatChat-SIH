@@ -14,7 +14,7 @@ function App() {
         
         <Navbar/>
         <Mainfeatures/>
-        <div className="mb-15">
+        <div className="">
           <Features />
         </div>
         <Mode/>
