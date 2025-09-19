@@ -21,7 +21,7 @@ const Navbar = () => {
             <button className="bg-cyan-600 font-semibold pl-4 pr-4 rounded-2xl cursor-pointer">SignIn</button>
           </nav>
           <h1 className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-14">
-            Dive into the Ocean of Data..
+            Dive into the Ocean of Data
           </h1>
           <h2 className="font-extralight sm:text-xl mt-4 text-center">
             AI-powered insights from ARGO floats
