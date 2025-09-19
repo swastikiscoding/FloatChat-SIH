@@ -1,0 +1,36 @@
+(fastapi-server) PS C:\Users\arkma\Documents\GitHub\FloatChat-SIH\fastapi-server> uv run -m app.services.chatbot
+2025-09-19 18:37:25.623 | INFO     | app.services.tools:load_argo_region:97 - Loading Argo region data: box=[52.0, 60.0, -5.0, 4.0, 490.0, 510.0]
+2025-09-19 18:37:57.780 | INFO     | app.services.tools:load_argo_region:108 - Loaded Argo data: Argo region [52.0, 60.0, -5.0, 4.0, 490.0, 510.0], rows=13711
+2025-09-19 18:38:03.478 | INFO     | app.services.tools:run_duckdb:122 - Running DuckDB SQL on dataset=Out[1], sql=SELECT AVG(TEMP) AS avg_temp FROM dataset WHERE PRES >= 490.0 AND PRES <= 510.0;
+2025-09-19 18:38:03.507 | INFO     | app.services.tools:run_duckdb:127 - DuckDB query result stored as Out[2], rows=1
+2025-09-19 18:38:10.155 | INFO     | app.services.tools:display:133 - Displaying dataset=Out[2]
+2025-09-19 18:38:19.202 | INFO     | app.services.tools:display:133 - Displaying dataset=Out[2]
+2025-09-19 18:38:26.399 | INFO     | app.services.tools:run_duckdb:122 - Running DuckDB SQL on dataset=Out[1], sql=SELECT AVG(TEMP) AS avg_temp FROM dataset WHERE PRES >= 490.0 AND PRES <= 510.0;
+2025-09-19 18:38:26.416 | INFO     | app.services.tools:run_duckdb:127 - DuckDB query result stored as Out[3], rows=1
+2025-09-19 18:38:30.817 | INFO     | app.services.tools:run_duckdb:122 - Running DuckDB SQL on dataset=Out[1], sql=SELECT AVG(TEMP) AS avg_temp FROM dataset WHERE PRES >= 490.0 AND PRES <= 510.0;
+2025-09-19 18:38:30.835 | INFO     | app.services.tools:run_duckdb:127 - DuckDB query result stored as Out[4], rows=1
+2025-09-19 18:38:35.944 | INFO     | app.services.tools:load_argo_region:97 - Loading Argo region data: box=[52.0, 60.0, -5.0, 4.0, 490.0, 510.0]
+2025-09-19 18:39:02.927 | INFO     | app.services.tools:load_argo_region:108 - Loaded Argo data: Argo region [52.0, 60.0, -5.0, 4.0, 490.0, 510.0], rows=13711
+2025-09-19 18:39:11.390 | INFO     | app.services.tools:run_duckdb:122 - Running DuckDB SQL on dataset=Out[5], sql=SELECT AVG(TEMP) AS avg_temp FROM dataset WHERE PRES >= 490.0 AND PRES <= 510.0;
+2025-09-19 18:39:11.409 | INFO     | app.services.tools:run_duckdb:127 - DuckDB query result stored as Out[6], rows=1
+2025-09-19 18:39:19.365 | INFO     | app.services.tools:load_argo_region:97 - Loading Argo region data: box=[52.0, 60.0, -5.0, 4.0, 490.0, 510.0]
+2025-09-19 18:39:47.123 | INFO     | app.services.tools:load_argo_region:108 - Loaded Argo data: Argo region [52.0, 60.0, -5.0, 4.0, 490.0, 510.0], rows=13711
+2025-09-19 18:39:55.326 | INFO     | app.services.tools:load_argo_region:97 - Loading Argo region data: box=[52.0, 60.0, -5.0, 4.0, 490.0, 510.0]
+2025-09-19 18:40:23.456 | INFO     | app.services.tools:load_argo_region:108 - Loaded Argo data: Argo region [52.0, 60.0, -5.0, 4.0, 490.0, 510.0], rows=13711
+2025-09-19 18:40:35.877 | INFO     | app.services.tools:load_argo_region:97 - Loading Argo region data: box=[52.0, 60.0, -5.0, 4.0, 490.0, 510.0]
+2025-09-19 18:40:57.383 | INFO     | app.services.tools:load_argo_region:108 - Loaded Argo data: Argo region [52.0, 60.0, -5.0, 4.0, 490.0, 510.0], rows=13711
+Answer: About 9.78 °C at roughly 500 m depth in the western Indian Ocean.
+
+What I did (explanation): I used Argo profiling float data restricted to a western Indian Ocean region (longitude 52°E to 60°E, latitude -5° to 4°). I selected samples with PRES between 490 and 510 dbar to target ~500 m depth (since PRES is pressure in decibars; ~1 dbar ≈ 1 meter depth). I then computed the mean of TEMP (in °C) for those samples. The resulting average TEMP is 9.78 °C.
+
+Why this is region-specific: The Indian Ocean is vast and thermally stratified. Averaging temperatures over the entire basin would require combining all available Argo data across all longitudes and latitudes, including proper QA and representativeness checks. The value above is for a limited box in the western Indian Ocean and may not reflect basin-wide conditions.
+
+Key terms (with quick definitions and examples):
+- Argo: An international program deploying autonomous profiling floats that measure temperature, salinity, and pressure from the surface down to ~2000 m and back, roughly every 10 days. Example: A float surfaces, transmits TEMPerature (TEMP), SALinity (PSAL), and PRES data.
+- PRES (pressure): Pressure in decibars (dbar); near the surface, 1 dbar ≈ 1 meter depth. PRES = 500 dbar ~ 500 meters deep.
+- TEMP: Temperature of seawater measured by Argo sensors, in °C (Celsius). Example: TEMP around surface ~20–30 °C in tropical regions, decreasing with depth.
+- Depth window: The region above used PRES 490–510 dbar to approximate ~500 m depth.
+
+If you want, I can scale this up to estimate a basin-wide Indian Ocean average by sampling across a larger longitude/latitude grid and applying consistent QC, then report a global mean with uncertainty.
+
+Source: Argo region data for lon 52–60°E, lat -5° to 4° (PRES 490–510 dbar), with TEMP channel used to compute the mean temperature.
