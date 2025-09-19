@@ -1,8 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import bgImage from "../../assets/bgImage.png"
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton,useAuth } from "@clerk/clerk-react";
+
+
 const Navbar = () => {
   const navigate = useNavigate();
+  const {isSignedIn}=useAuth()
+
+  const handleclick=()=>{
+    if (isSignedIn) {
+      navigate("/Chatbot");  
+    } else {
+      navigate("/google-signin"); 
+    }
+  }
+
   return (
       <div className="min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden"
             style={{backgroundImage:`url(${bgImage})`,backgroundSize: "101vw"}}>
@@ -30,7 +42,7 @@ const Navbar = () => {
             AI-powered insights from ARGO floats
           </h2>
           <div className="text-center mt-20">
-              <button className="bg-[#095268] hover:bg-sky-700 font-semibold pl-6 pr-6 pt-2 pb-2 text-2xl rounded-2xl text-center cursor-pointer">Start Chatting</button>
+              <button className="bg-[#095268] hover:bg-sky-700 font-semibold pl-6 pr-6 pt-2 pb-2 text-2xl rounded-2xl text-center cursor-pointer" onClick={() => handleclick()}>Start Chatting</button>
           </div>
       </div>
   )
