@@ -76,6 +76,8 @@ def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
 def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
     new_history = response.new_messages()
+    logger.info(f"User message: {request.message}")
+    logger.info(f"Bot response: {response.output.reply}")
     return response.output, new_history
 
 if __name__ == "__main__":
@@ -83,10 +85,9 @@ if __name__ == "__main__":
     response: AgentResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="get me some data from float 6902746",
+            message="get me the max temperature from float 6902746, cycle 1, only",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []
     )
-    answer: str = response.reply
-    print(answer)
+    # The logger should print the response.
