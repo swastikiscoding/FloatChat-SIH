@@ -11,7 +11,6 @@ function App() {
   return (
     <>
       <div className="main">
-        
         <Navbar/>
         <Mainfeatures/>
         <div className="mb-15">
