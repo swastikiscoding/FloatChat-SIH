@@ -20,7 +20,7 @@ const Navbar = () => {
               <UserButton />
             </SignedIn>
             <SignedOut>
-              <button className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer" onClick={() => navigate("/google-signin")}>SignIn</button>
+              <button className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer" onClick={() => navigate("/google-signin")}>Sign In</button>
             </SignedOut>
           </nav>
           <h1 className="text-4xl sm:text-7xl font-bold mt-15 text-center">
