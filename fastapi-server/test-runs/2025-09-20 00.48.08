@@ -1,0 +1,19 @@
+(fastapi-server) PS C:\Users\arkma\Documents\GitHub\FloatChat-SIH\fastapi-server> uv run -m app.services.chatbot
+2025-09-20 00:43:13.636 | INFO     | app.services.tools:load_argo_profile:42 - Loading Argo profile data: float=6902746, cyc=1
+2025-09-20 00:43:15.616 | INFO     | app.services.tools:load_argo_profile:53 - Loaded Argo data: Argo profile 6902746, cycle 1, rows=156
+2025-09-20 00:43:22.333 | INFO     | app.services.tools:run_duckdb:130 - Running DuckDB SQL on dataset=Out[1], sql=SELECT MAX(TEMP) AS max_temp FROM data
+2025-09-20 00:43:22.348 | INFO     | app.services.tools:run_duckdb:138 - DuckDB query result stored as Out[2], rows=1
+2025-09-20 00:43:26.025 | INFO     | app.services.tools:get_sample_rows:151 - Displaying dataset=Out[2]
+2025-09-20 00:43:34.150 | INFO     | __main__:get_bot_response_with_new_history:79 - User message: get me the max temperature from float 6902746, cycle 1, only
+2025-09-20 00:43:34.151 | INFO     | __main__:get_bot_response_with_new_history:80 - Bot response: Here's the max temperature for Argo float 6902746, cycle 1.
+
+- What I did: I retrieved the profile data for float 6902746 at cycle 1, which includes a TEMP column (sea temperature in degrees Celsius) across multiple depth points. I then computed the maximum value across that TEMP column.
+- Result: Max TEMP = 28.038 °C (degrees Celsius).
+
+Notes and context:
+- TEMP is the seawater temperature measured along the profiler’s vertical profile (depths from surface down to ~2,000+ meters in many floats).
+- The profile contains 156 rows, i.e., 156 temperature samples across depth/time in this cycle.
+
+Would you like me to report the depth at which this maximum occurs, or the time stamp(s) corresponding to that maximum?
+
+Source: Argo data for float 6902746, cycle 1 (TEMP column). Computed using a SQL MAX(TEMP) over that profile.

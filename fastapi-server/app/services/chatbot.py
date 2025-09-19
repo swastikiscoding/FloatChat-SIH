@@ -85,7 +85,7 @@ if __name__ == "__main__":
     response: AgentResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="get me some data from float 6902746, cycle 1 only",
+            message="get me the max temperature from float 6902746, cycle 1, only",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []

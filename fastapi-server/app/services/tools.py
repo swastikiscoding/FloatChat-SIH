@@ -45,7 +45,7 @@ def load_argo_profile(
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
-        f'Loaded Argo data as `{ref}`.',
+        f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
@@ -69,7 +69,7 @@ def load_argo_float(
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
-        f'Loaded Argo data as `{ref}`.',
+        f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
@@ -107,7 +107,7 @@ def load_argo_region(
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
-        f'Loaded Argo data as `{ref}`.',
+        f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
@@ -116,29 +116,40 @@ def load_argo_region(
     return '\n'.join(output)
 
 
-def run_duckdb(ctx: RunContext[AgentDependencies], dataset: str, sql: str) -> str:
+def run_duckdb(
+    ctx: RunContext[AgentDependencies],
+    dataset_ref: str,
+    sql: str
+) -> str:
     """Run DuckDB SQL query on the DataFrame.
-
-    Note that the virtual table name used in DuckDB SQL must be `dataset`.
-
     Args:
         ctx: Pydantic AI agent RunContext
-        dataset: reference string to the DataFrame
+        dataset_ref: reference string, which refers to the DataFrame
         sql: the query to be executed using DuckDB
     """
-    logger.info(f"Running DuckDB SQL on dataset={dataset}, sql={sql}")
-    data = ctx.deps.get(dataset)
+    logger.info(f"Running DuckDB SQL on dataset={dataset_ref}, sql={sql}")
+    data = ctx.deps.get(dataset_ref)
     result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
     # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
     ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
+    output = [
+        f'Executed SQL query and stored result inside reference `{ref}`.',
+    ]
     logger.info(f"DuckDB query result stored as {ref}, rows={len(result.df())}")  # pyright: ignore[reportUnknownMemberType]
-    return f'Executed SQL, result is `{ref}`'
+    return '\n'.join(output)
 
 
-def get_sample_rows(ctx: RunContext[AgentDependencies], name: str) -> str:
-    """Display at most 5 rows of the dataframe."""
-    logger.info(f"Displaying dataset={name}")
-    dataset = ctx.deps.get(name)
+def get_sample_rows(
+    ctx: RunContext[AgentDependencies],
+    dataset_ref: str
+) -> str:
+    """Display at most 5 rows of the dataframe stored in dataset_ref.
+    Args:
+        ctx: Pydantic AI agent RunContext
+        dataset_ref: reference string to the DataFrame
+    """
+    logger.info(f"Displaying dataset={dataset_ref}")
+    dataset = ctx.deps.get(dataset_ref)
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
 
@@ -184,6 +195,7 @@ def plot_saved_data(
     buf.seek(0)
     img_b64 = base64.b64encode(buf.read()).decode("utf-8")
     logger.info(f"Plotted data for {name} as base64 PNG.")
+    plt_str = f"data:image/png;base64,{img_b64}"
     #return f"data:image/png;base64,{img_b64}" LETS NOT BLOW UP AI CREDITS
 
 
@@ -198,4 +210,4 @@ all_tools = [
 
 
 if __name__ == "__main__":
-    pass
+    print(all_tools[0])
