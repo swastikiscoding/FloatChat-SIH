@@ -1,20 +1,13 @@
-import {
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/clerk-react";
 import Features from "./components/landing-page/Features";
 import Faq from "./components/landing-page/Faq";
 import DevTeam from "./components/landing-page/Team";
 import Footer from "./components/landing-page/Footer";
 import "./App.css";
-import { useNavigate } from "react-router-dom";
 import Navbar from "./components/landing-page/Navbar";
 import Mainfeatures from "./components/landing-page/Mainfeatures";
 import Mode from "./components/landing-page/Mode";
 
 function App() {
-  const navigate = useNavigate();
   return (
     <>
       {/* <Waves/> */}
@@ -32,6 +25,8 @@ function App() {
             <UserButton />
           </SignedIn>
         </header>
+      <div className="main">
+        
         <Navbar/>
         <Mainfeatures/>
         <div className="mb-15">

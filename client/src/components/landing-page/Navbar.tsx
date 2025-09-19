@@ -1,6 +1,10 @@
 import { Waves } from "../ui/waves-background"
 
+import { useNavigate } from "react-router-dom";
+import bgImage from "../../assets/bgImage.png"
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
       <div className="relative min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden">
           <div className="absolute inset-0 z-0 ">
@@ -19,6 +23,12 @@ const Navbar = () => {
               <div className="cursor-pointer">About Us</div>
             </div>
             <button className="bg-cyan-600 font-semibold pl-4 pr-4 rounded-2xl cursor-pointer">SignIn</button>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <button className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer" onClick={() => navigate("/google-signin")}>SignIn</button>
+            </SignedOut>
           </nav>
           <h1 className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-14">
             Dive into the Ocean of Data..
