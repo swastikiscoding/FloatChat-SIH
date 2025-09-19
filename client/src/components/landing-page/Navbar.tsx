@@ -1,5 +1,5 @@
 import { Waves } from "../ui/waves-background"
-
+import icon from "../../../public/favicon.svg"
 import { useNavigate } from "react-router-dom";
 
 import { SignedIn, SignedOut, UserButton,useAuth } from "@clerk/clerk-react";
@@ -26,7 +26,7 @@ const Navbar = () => {
           <div className="relative z-10">
             <nav className="flex justify-between pt-5 pl-8 pr-8">
             <div className="flex gap-2 items-center">
-              <span className="text-cyan-600 text-2xl">🌊</span>
+              <img src={icon} alt="Icon" className="w-8 h-8"/>
               <div className="font-semibold text-xl ">FloatChat</div>
             </div>
             <div className=" hidden sm:flex text-white gap-8 pl-4 pr-4 pt-1 pb-1 rounded-2xl border-cyan-600 border-2">
@@ -42,7 +42,7 @@ const Navbar = () => {
             </SignedOut>
           </nav>
           <h1 className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-14">
-            Dive into the Ocean of Data..
+            Dive into the Ocean of Data
           </h1>
           <h2 className="font-extralight sm:text-xl mt-4 text-center">
             AI-powered insights from ARGO floats
