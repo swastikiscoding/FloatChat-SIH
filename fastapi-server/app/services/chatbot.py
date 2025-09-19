@@ -57,6 +57,7 @@ agent = Agent(
     output_type=AgentResponse,
     instructions=default_sys_prompt,
     tools=all_tools,
+    #model_settings=ModelSettings()
 )
 
 @agent.system_prompt

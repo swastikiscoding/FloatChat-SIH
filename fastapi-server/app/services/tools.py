@@ -5,7 +5,7 @@ from pydantic_ai import Tool, RunContext
 # https://ai.pydantic.dev/third-party-tools/
 
 from app.schemas.chat import AgentDependencies
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy import DataFetcher as ArgopyDataFetcher
 import duckdb
 import xarray as xr
 
@@ -16,41 +16,28 @@ from typing import Callable
 from loguru import logger
 
 
-def load_argo_data(
+fetcher = ArgopyDataFetcher(
+    mode='standard', # Default, but it's good to be explicit
+    src='erddap' # Default, but it's good to be explicit
+)
+
+
+def load_argo_profile(
     ctx: RunContext[AgentDependencies],
-    mode: str = 'profile',
-    **kwargs
+    float_id: int,
+    cyc: int | list[int]
 ) -> str:
-    """Load Argo data using argopy DataFetcher.
+    """Load Argo data for a specific profile.
+    
+    For instance, to retrieve data for the 12th profile of float WMO 6902755:
+    float_id=6902755, cyc=12
 
-    Args:
-        ctx: Pydantic AI agent RunContext
-        mode: 'profile', 'float', or 'region' (default: 'profile')
-        kwargs: parameters for the DataFetcher (e.g., WMO, box, etc.)
+    For more than one profile:
+    float_id=6902755, cyc=[3, 12]
     """
-    logger.info(f"Loading Argo data with mode={mode}, params={kwargs}")
-
-    fetcher = ArgoDataFetcher()
-    if mode == 'profile':
-        # Example: profile=6902746, cyc=1
-        profile = kwargs.get('profile', 6902746)
-        cyc = kwargs.get('cyc', 1)
-        data = fetcher.profile(profile, cyc).to_xarray()
-        desc = f"Argo profile {profile}, cycle {cyc}"
-    elif mode == 'float':
-        # Example: float=6902746
-        data = fetcher.float(kwargs.get('float', 6902746)).to_xarray()
-        desc = f"Argo float {kwargs.get('float', 6902746)}"
-    elif mode == 'region':
-        # Example: box=[-10, 30, 10, 40]
-        data = fetcher.region(
-            box=kwargs.get('box', [-10, 30, 10, 40])
-        ).to_xarray()
-        desc = f"Argo region {kwargs.get('box', [-10, 30, 10, 40])}"
-    else:
-        raise ValueError(f"Unknown mode: {mode}")
-
-    # Convert to DataFrame for storage
+    logger.info(f"Loading Argo profile data: float={float_id}, cyc={cyc}")
+    data = fetcher.profile(float_id, cyc).to_xarray()
+    desc = f"Argo profile {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
@@ -59,7 +46,68 @@ def load_argo_data(
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
     ]
+    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    return '\n'.join(output)
 
+
+def load_argo_float(
+    ctx: RunContext[AgentDependencies],
+    float_id: int | list[int]
+) -> str:
+    """Load Argo data for a specific float.
+    float_id: the WMO identifier of the float
+    Eg. [6902746, 6902755]
+    Eg. 6902746
+    """
+    logger.info(f"Loading Argo float data: float={float_id}")
+    data = fetcher.float(float_id).to_xarray()
+    desc = f"Argo float {float_id}"
+    df = data.to_dataframe().reset_index()
+    ref = ctx.deps.store(df)
+    output = [
+        f'Loaded Argo data as `{ref}`.',
+        f'Description: {desc}',
+        f'Columns: {list(df.columns)}',
+        f'Rows: {len(df)}'
+    ]
+    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    return '\n'.join(output)
+
+
+def load_argo_region( # Takes very long when not provided with bounding dates, I think? For the example it was pretty fast.
+    ctx: RunContext[AgentDependencies],
+    lon: list[float],
+    lat: list[float],
+    dpt: list[float],
+    date: list[str] | None = None
+) -> str:
+    """Load Argo data for a specific region.
+    The region is defined by:
+        lon: list of two floats [lon_min, lon_max]
+        lat: list of two floats [lat_min, lat_max]
+        dpt: list of two floats [dpt_min, dpt_max]
+        date: optional list of two strings [date_min, date_max] in 'YYYY-MM-DD' format
+    If `date` is not specified, the entire time series is fetched.
+
+    Eg: lon=[-60.0, -55.0], lat=[40.0, 45.0], dpt=[0.0, 10.0], date=['2007-08-01', '2007-09-01']
+
+    Always think about the size of the data you are requesting!
+    If your box is too large, ie. larger than the box above, the data request will likely fail!
+    Make sure the distance between lon_min and lon_max is less than 10.0.
+    You are allowed to use smaller boxes for approximation.
+    """
+    box = lon + lat + dpt + (date if date else [])
+    logger.info(f"Loading Argo region data: box={box}")
+    data = fetcher.region(box).to_xarray()
+    desc = f"Argo region {box}"
+    df = data.to_dataframe().reset_index()
+    ref = ctx.deps.store(df)
+    output = [
+        f'Loaded Argo data as `{ref}`.',
+        f'Description: {desc}',
+        f'Columns: {list(df.columns)}',
+        f'Rows: {len(df)}'
+    ]
     logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
     return '\n'.join(output)
 
@@ -90,7 +138,13 @@ def display(ctx: RunContext[AgentDependencies], name: str) -> str:
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
 
-all_tools = [load_argo_data, run_duckdb, display]
+all_tools = [
+    load_argo_float,
+    load_argo_profile,
+    load_argo_region,
+    run_duckdb,
+    display,
+]
 
 
 if __name__ == "__main__":
