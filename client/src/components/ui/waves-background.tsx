@@ -295,7 +295,7 @@ export function Waves({
   updateMouse((e as MouseEvent).pageX, (e as MouseEvent).pageY)
     }
   function onTouchMove(e: TouchEvent) {
-  (e as TouchEvent).preventDefault()
+  // (e as TouchEvent).preventDefault()
   const touch = (e as TouchEvent).touches[0]
   updateMouse(touch.clientX, touch.clientY)
     }
