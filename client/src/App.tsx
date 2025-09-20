@@ -11,7 +11,8 @@ function App() {
   return (
     <>
       <Navbar />
-      <Mainfeatures />
+            <div className="h-[2px] w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-400 opacity-70 " />
+      <div className="mt-20 "><Mainfeatures /></div>
       <div className="mb-15">
         <Features />
       </div>
