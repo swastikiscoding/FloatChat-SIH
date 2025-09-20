@@ -58,13 +58,13 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     setprevPrompts((prev) => [...prev, currentPrompt]);
 
     // Payload for API
-    const payload = {
-      contents: [
-        {
-          parts: [{ text: currentPrompt }],
-        },
-      ],
-    };
+    // const payload = {
+    //   contents: [
+    //     {
+    //       parts: [{ text: currentPrompt }],
+    //     },
+    //   ],
+    // };
 
     // Placeholder: Replace with API call
     let finalResponse = "";

@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import BotReply from "./BotReply";
 import UserQuerry from "./UserQuerry";
 import { Context } from "../context/Context.tsx";
-import icon from "../../../../public/favicon.svg";
 
 const ChatSection: React.FC = () => {
   const {
