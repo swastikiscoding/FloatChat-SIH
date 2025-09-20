@@ -28,7 +28,7 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
             <Waves/>
           </div>
 
-          <div className="relative z-10 p-8">
+          <div className="relative z-10">
             <motion.nav 
               className="grid grid-cols-3 items-center px-6 py-2"
               initial={{ y: -50, opacity: 0 }}
