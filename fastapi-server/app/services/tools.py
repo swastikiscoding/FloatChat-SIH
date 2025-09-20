@@ -20,6 +20,8 @@ website_down_msg = """The `erddap` website, the site from where you get your dat
 Ask the user to check at `https://erddap.ifremer.fr/erddap` themselves.
 If this is the second time you are getting this error, don't call this tool again."""
 
+virtual_table_name = 'db'  # used in duckdb SQL queries
+
 
 def load_argo_profile(
     ctx: RunContext[AgentDependencies],
@@ -169,11 +171,14 @@ def run_duckdb(
     dataframe_ref: str,
     sql: str
 ) -> str:
-    """Run DuckDB SQL query on the DataFrame.
-    Note that the virtual table name used in DuckDB SQL must be `dataset`.
+    f"""Run DuckDB SQL query on the DataFrame.
+    Note that the virtual table name used in DuckDB SQL must be {virtual_table_name}.
     Args:
         dataframe_ref: reference string, which refers to the DataFrame
         sql: the query to be executed using DuckDB
+    
+    Example SQL query:
+    SELECT AVG(TEMP) FROM {virtual_table_name} WHERE PRES >= 490.0;
     """
     logger.info(f"Running DuckDB SQL on dataframe={dataframe_ref}, sql={sql}")
 
@@ -184,7 +189,7 @@ def run_duckdb(
         raise ModelRetry(f"Error retrieving dataframe: {e}")
     
     try:
-        result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
+        result = duckdb.query_df(df=data, virtual_table_name=virtual_table_name, sql_query=sql)
     except Exception as e:
         logger.error(f"Error running DuckDB SQL: {e}")
         raise ModelRetry(f"Error running DuckDB SQL: {e}")
@@ -194,7 +199,7 @@ def run_duckdb(
     output = [
         f'Executed SQL query and stored result inside reference `{ref}`.',
     ]
-    logger.info(f"DuckDB query result stored as {ref}, rows={len(result.df())}")  # pyright: ignore[reportUnknownMemberType]
+    logger.info(f"DuckDB query result stored as {ref}, rows={len(result.df())}") # pyright: ignore[reportUnknownMemberType]
     return '\n'.join(output)
 
 
