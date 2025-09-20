@@ -1,6 +1,5 @@
 import { Waves } from "../ui/waves-background"
 import { motion } from "framer-motion";
-import icon from "../../../public/favicon.svg"
 
 import { useNavigate } from "react-router-dom";
 
@@ -63,6 +62,8 @@ const Navbar = () => {
             </motion.button>
             </SignedOut>
           </motion.nav>
+
+          <div className="flex flex-col justify-center items-center h-[60vh] sm:h-[75vh] text-white">
         <motion.h1 
           className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-14"
           initial={{ opacity: 0, y: 40 }}
@@ -89,14 +90,16 @@ const Navbar = () => {
           <motion.button 
             whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
             className="bg-cyan-600 font-semibold pl-6 pr-6 pt-2 pb-2 text-2xl rounded-2xl text-center cursor-pointer"
+            onClick={handleclick}
           >
             Start Chatting
           </motion.button>
         </motion.div>
 
           </div>
+
+          </div>
       </div>
-    </div>
   )
 }
 
