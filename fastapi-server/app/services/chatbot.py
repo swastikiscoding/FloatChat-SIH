@@ -14,8 +14,9 @@ load_dotenv()
 default_sys_prompt = \
 """You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
-
-Please don't call the same tools with the same parameters repeatedly.
+Don't call the same tools with the same parameters repeatedly.
+If the user asks for information you are unable to fetch or do not have, give an approximate solution with a disclaimer and steps on how the user can get the exact information.
+If the user's query is not related to oceanography or Argo data, politely inform them that you are specialized in oceanography and Argo data and cannot assist with unrelated queries.
 """
 
 student_sys_prompt = \
@@ -24,10 +25,11 @@ Keep the tone friendly and engaging, and conversations educational.
 """
 
 researcher_sys_prompt = \
-"""No need to explain basic concepts."""
+"""No need to explain basic concepts.
+If the user's query is short, to the point, and very clear about what it is asking, keep your response very very short and to the point as well."""
 
 model = OpenAIChatModel(
-    getenv('MODEL_NAME', 'gpt-5-nano'),
+    getenv('MODEL_NAME', 'gpt-5-chat'),
     provider=AzureProvider(
         azure_endpoint=getenv('AZURE_ENDPOINT'),
         api_version=getenv('AZURE_API_VERSION'),
@@ -85,7 +87,7 @@ if __name__ == "__main__":
     response: AgentResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="get me the max temperature from float 6902746, cycle 1, only",
+            message="get me the max temperature from float 6902746, cycle 1, only. No other information. Keep your answer short.",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []
