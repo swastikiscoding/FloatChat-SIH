@@ -27,7 +27,7 @@ researcher_sys_prompt = \
 """No need to explain basic concepts."""
 
 model = OpenAIChatModel(
-    getenv('MODEL_NAME', 'gpt-5-nano'),
+    getenv('MODEL_NAME', 'gpt-5-chat'),
     provider=AzureProvider(
         azure_endpoint=getenv('AZURE_ENDPOINT'),
         api_version=getenv('AZURE_API_VERSION'),
@@ -49,7 +49,7 @@ def test_credentials():
             }
         ],
         max_completion_tokens=16384,
-        model=getenv('MODEL_NAME', 'gpt-5-nano')
+        model=getenv('MODEL_NAME', 'gpt-5-chat')
     )
     print(response.choices[0].message.content)
 
