@@ -1,3 +1,4 @@
+import icon from "../../assets/shell_fevicon.svg"
 
 export default function Footer() {
   return (
@@ -8,7 +9,7 @@ export default function Footer() {
          
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <img src="../../../public/apple-touch-icon.png" alt=""  className="w-9 h-9"/>
+              <img src={icon} alt=""  className="w-7 h-7"/>
               <h1 className="text-white font-semibold text-lg">FloatChat</h1>
             </div>
             <p className="text-sm text-gray-400">

@@ -15,8 +15,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="bg-gray-950">
         {/* Logo button */}
-        <button className="flex items-center px-0 pt-2 ml-1 mt-1">
-          <Shell className="w-6 h-6 text-cyan-400" />
+        <button className="flex items-center pl-0 pt-2 ml-1 mt-1">
+          <Shell className="w-6 h-6 text-cyan-400 hover:scale-110" />
           <span className="text-2xl pl-3 group-data-[collapsible=icon]:hidden"> {/*hides*/}
             FloatChat
           </span>
@@ -24,10 +24,10 @@ export function AppSidebar() {
 
         {/* New Chat button */}
         <button
-          className="flex items-center px-2 p-2 mt-9 mb-2 rounded-lg text-gray-200 text-sm transition-all duration-200 hover:scale-[1.02] hover:bg-white/10 hover:border-white/70"
+          className="flex items-center justify-around px-1 p-2 mt-9 mb-2 rounded-lg text-gray-200 text-sm transition-all duration-200 hover:scale-[1.02] hover:bg-gray-800/70 hover:border-white/70"
           >
           <Plus className="w-5 h-5 text-cyan-400" />
-          <span className="pl-1 group-data-[collapsible=icon]:hidden"> {/*hides*/}
+          <span className="pl-0 mr-28 group-data-[collapsible=icon]:hidden"> {/*hides*/}
             New chat
           </span>
         </button>

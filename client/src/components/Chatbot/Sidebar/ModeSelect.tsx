@@ -24,25 +24,35 @@ const ModeSelect = () => {
       className="relative group" 
       ref={dropdownRef}
     >
-      <div>
+      <div className="relative" >
         <button
           onClick={() => setOpen(!open)}
-          className="flex items-center justify-between w-full pl-2 py-2 border border-white/40 rounded-lg text-gray-200 text-sm focus:outline-none"
+          className="flex items-center justify-center px-1 p-2 mt-2 mb-2 w-full rounded-lg text-gray-200 text-sm border border-white/40 transition-all duration-200 hover:scale-[1.02] hover:bg-gray-800/50 hover:border-white/50"
         >
+          {/* Left side: icon + label */}
+          <div className="flex items-center justify-center gap-2 w-17/20">
+            <Star size={18} className="text-cyan-400" />
+            <span
+              className={`mr-auto group-data-[collapsible=icon]:hidden ml-1 ${
+                selected ? "text-gray-200 text-sm" : "text-gray-400"
+              }`}
+            >
+              {selected || "Select a mode"}
+            </span>
+          </div>
 
-        <Star size={16} className="text-cyan-400 mr-[4px]" />
-
-        <span className={`${selected ? "" : "text-gray-400"} group-data-[collapsible=icon]:hidden`}>
-            {selected || "Select a mode"}
-        </span>
-
+          {/* Right side: chevron */}
           <motion.div
             animate={{ rotate: open ? 180 : 0 }}
             transition={{ duration: 0.2 }}
+            className="group-data-[collapsible=icon]:hidden"
           >
-            <ChevronDown size={18} className="text-cyan-400 group-data-[collapsible=icon]:hidden mr-3" />
+            <ChevronDown size={18} className="text-cyan-400" />
           </motion.div>
         </button>
+
+
+
 
         <AnimatePresence>
           {open && (
@@ -51,14 +61,14 @@ const ModeSelect = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.2 }}
-              className="absolute w-full mt-1 bg-gray-900 border border-cyan-400/20 rounded-lg shadow-lg z-10"
+              className="absolute left-1/2 mt-1 w-25 bg-gray-900 border border-cyan-400/20 rounded-lg shadow-lg z-[1000]"
             >
               {options.map((option) => (
                 <button
                   key={option}
                   onClick={() => {
-                    setSelected(option);
-                    setOpen(false);
+                    setSelected(option)
+                    setOpen(false)
                   }}
                   className="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md"
                 >

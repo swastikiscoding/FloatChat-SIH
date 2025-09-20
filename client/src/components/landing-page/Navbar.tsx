@@ -1,11 +1,11 @@
 import { Waves } from "../ui/waves-background"
-import icon from "../../../public/favicon.svg"
+import icon from "../../assets/shell_fevicon.svg"
 import { useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 const Navbar = () => {
   const navigate = useNavigate();
   return (
-      <div className="relative min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden bg-amber-800">
+      <div className="relative min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden">
           <div className="inset-0 z-0">
             <Waves/>
           </div>
