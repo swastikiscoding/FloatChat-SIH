@@ -39,7 +39,7 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
             className="flex gap-2 items-center"
             whileHover={{ scale: 1.1 }}
           >
-              <span className="text-cyan-600 text-2xl">🌊</span>
+              <img src="../../../public/favicon.svg" alt=""  className="w-9 h-9"/>
 
               <div className="font-semibold text-xl ">FloatChat</div>
             </motion.div>
@@ -74,7 +74,7 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          Dive into the Ocean of Data..
+          Dive into the Ocean of Data
         </motion.h1>
 
         <motion.h2 
