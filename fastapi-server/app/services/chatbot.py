@@ -30,6 +30,7 @@ Keep the tone friendly and engaging, and conversations educational.
 researcher_sys_prompt = \
 """No need to explain basic concepts."""
 
+
 model = OpenAIChatModel(
     getenv('MODEL_NAME', 'gpt-5-nano'),
     provider=AzureProvider(
