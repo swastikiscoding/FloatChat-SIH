@@ -31,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from app.api.chat import router
+from app.api.chat_api import router
 app.include_router(router, prefix="/chat", tags=["chat"])
 
 @app.get("/")

@@ -14,6 +14,8 @@ load_dotenv()
 default_sys_prompt = \
 """You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
+
+Please don't call the same tools with the same parameters repeatedly.
 """
 
 student_sys_prompt = \
@@ -74,17 +76,18 @@ def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
 def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
     new_history = response.new_messages()
+    logger.info(f"User message: {request.message}")
+    logger.info(f"Bot response: {response.output.reply}")
     return response.output, new_history
 
 if __name__ == "__main__":
     #test_credentials()
     response: AgentResponse
-    response, _ = get_bot_response_with_new_history(
+    response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="What is the average temperature of the Indian ocean at a depth of 500 meters?",
+            message="get me the max temperature from float 6902746, cycle 1, only",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []
     )
-    answer: str = response.reply
-    print(answer)
+    # The logger should print the response.
