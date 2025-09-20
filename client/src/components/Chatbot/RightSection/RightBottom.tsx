@@ -2,7 +2,7 @@ import { Input } from '../../ui/input'
 
 const RightBottom = () => {
   return (
-    <div className='h-8/28 rounded-b-2xl px-15 pt-12 '>
+    <div className='h-5/28 rounded-b-2xl px-15 pt-5'>
       <Input/>
     </div>
   )

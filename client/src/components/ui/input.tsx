@@ -11,7 +11,7 @@ function Input({ className, ...props }: React.ComponentProps<"textarea">) {
         rows={1}
         placeholder="Argo data made easy..."
         className={cn(
-          "w-full min-h-20 max-h-27 px-5 pr-14 py-3 resize-none rounded-2xl outline-none",
+          "w-full min-h-20 max-h-22 px-5 pr-14 py-3 resize-none rounded-2xl outline-none",
           "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
           "border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.6)]",
           "text-gray-200 placeholder:text-gray-500 text-base",
