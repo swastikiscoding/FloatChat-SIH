@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Earth from "./Earth";
-import { Calendar } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>('2025-09-05');
@@ -10,8 +9,8 @@ const Dashboard: React.FC = () => {
     setIsChangingDate(true);
     const dateValue = typeof value === 'string' ? value : value.target.value;
     setSelectedDate(dateValue);
-    // Reset the changing state after a brief delay to show visual feedback
     setTimeout(() => setIsChangingDate(false), 500);
+    if(isChangingDate) return; 
   };
 
   return (
