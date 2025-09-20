@@ -9,8 +9,11 @@ import ModeSelect from "./ModeSelect"
 import { Plus, Shell } from "lucide-react"
 import ChatHistory from "./ChatHistory"
 import { NavUser } from "./nav-user"
+import React from "react"
+import { Context } from "../context/Context.tsx"
 
 export function AppSidebar() {
+  const { newChat } = React.useContext(Context);
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="bg-gray-950">
@@ -23,7 +26,7 @@ export function AppSidebar() {
         </button>
 
         {/* New Chat button */}
-        <button
+        <button onClick={newChat}
           className="flex items-center px-2 p-2 mt-9 mb-2 rounded-lg text-gray-200 text-sm transition-all duration-200 hover:scale-[1.02] hover:bg-white/10 hover:border-white/70"
           >
           <Plus className="w-5 h-5 text-cyan-400" />
