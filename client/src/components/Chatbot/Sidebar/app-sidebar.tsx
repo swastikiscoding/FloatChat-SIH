@@ -9,25 +9,29 @@ import ModeSelect from "./ModeSelect"
 import { Plus, Shell } from "lucide-react"
 import ChatHistory from "./ChatHistory"
 import { NavUser } from "./nav-user"
+import React from "react"
+import { Context } from "../context/Context.tsx"
 
 export function AppSidebar() {
+  const { newChat } = React.useContext(Context);
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="bg-gray-950">
         {/* Logo button */}
         <button className="flex items-center pl-0 pt-2 ml-1 mt-1">
-          <Shell className="w-6 h-6 text-cyan-400 hover:scale-110" />
+          <Shell className="w-6 h-6 text-cyan-400 hover:scale-115" />
           <span className="text-2xl pl-3 group-data-[collapsible=icon]:hidden"> {/*hides*/}
             FloatChat
           </span>
         </button>
 
         {/* New Chat button */}
-        <button
-          className="flex items-center justify-around px-1 p-2 mt-9 mb-2 rounded-lg text-gray-200 text-sm transition-all duration-200 hover:scale-[1.02] hover:bg-gray-800/70 hover:border-white/70"
+
+        <button onClick={newChat}
+          className="flex items-center justify-center gap-3.5 px-1 p-2 mt-9 mb-2 rounded-lg text-gray-200 transition-all duration-200 hover:scale-[1.02] hover:bg-white/10 hover:border-white/70"
           >
-          <Plus className="w-5 h-5 text-cyan-400" />
-          <span className="pl-0 mr-28 group-data-[collapsible=icon]:hidden"> {/*hides*/}
+          <Plus className="w-5 h-5 text-cyan-40" />
+          <span className="pl-0 w-8/10 group-data-[collapsible=icon]:hidden text-left"> {/*hides*/}
             New chat
           </span>
         </button>

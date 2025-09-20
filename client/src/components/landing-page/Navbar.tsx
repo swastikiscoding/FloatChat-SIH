@@ -63,7 +63,7 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
               </motion.div>
 
               {/* Right Column - Sign In / User */}
-              <div className="flex justify-end items-center gap-4">
+              <div className="flex justify-end items-center gap-4 mb-2">
                 <SignedIn>
                   <UserButton />
                 </SignedIn>
