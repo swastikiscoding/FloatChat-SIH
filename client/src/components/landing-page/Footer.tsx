@@ -1,5 +1,23 @@
+import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
-export default function Footer() {
+type FooterProps = {
+  onFaqClick: () => void;
+  onFeaturesClick: () => void;
+  onModesClick: () => void;
+  onNavClick: () => void;
+};
+export default function Footer({onFaqClick, onFeaturesClick,onModesClick,onNavClick}:FooterProps) {
+  const navigate = useNavigate();
+  const {isSignedIn}=useAuth()
+
+  const handleclick=()=>{
+    if (isSignedIn) {
+      navigate("/Chatbot");  
+    } else {
+      navigate("/google-signin"); 
+    }
+  }
   return (
     <>
       <div className="h-[2px] w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-400 opacity-70 " />
@@ -15,69 +33,38 @@ export default function Footer() {
               Dive into the ocean of data
             </p>
           </div>
-
-         
           <div>
             <h3 className="font-semibold text-white mb-2 ">Quick Links</h3>
             <ul className="space-y-1 text-sm font-light">
               <li>
-                <a href="#" className="hover:text-cyan-400">
+                <div className="hover:text-cyan-400 cursor-auto" onClick={onNavClick}>
                   Home
-                </a>
+                </div>
               </li>
               <li>
-                <a href="#" className="hover:text-cyan-400">
+                <div className="hover:text-cyan-400 cursor-pointer" onClick={()=>handleclick()}>
                   Chat
-                </a>
+                </div>
               </li>
               <li>
-                <a href="#" className="hover:text-cyan-400">
+                <div className="hover:text-cyan-400 cursor-pointer" onClick={onModesClick}>
                   Modes
-                </a>
+                </div>
               </li>
             </ul>
           </div>
-
-          
-          {/* <div>
-            <h3 className="font-semibold text-white mb-2">Account</h3>
-            <ul className="space-y-1 text-sm font-light">
-              <li>
-                <a href="#" className="hover:text-cyan-400">
-                  Profile
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-cyan-400">
-                 Settings
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-cyan-400">
-                  Logout
-                </a>
-              </li>
-               <li>
-                <a href="#" className="hover:text-cyan-400">
-                  FAQs
-                </a>
-              </li>
-            </ul>
-          </div> */}
-
-          
           <div>
             <h3 className="font-semibold text-white mb-2">Help & Features</h3>
            <ul className="space-y-1 text-sm font-light">
               <li>
-                <a href="#" className="hover:text-cyan-400">
+                <div onClick={onFaqClick} className="hover:text-cyan-400 cursor-pointer">
                   FAQs
-                </a>
+                </div>
               </li>
               <li>
-                <a href="#" className="hover:text-cyan-400">
+                <div onClick={onFeaturesClick} className="hover:text-cyan-400 cursor-pointer">
                  AI features
-                </a>
+                </div>
               </li>
             </ul>
           </div>

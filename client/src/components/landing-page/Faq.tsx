@@ -58,7 +58,7 @@ const iconVariants = {
 };
 
  return (
-  <div className="bg-black text-white py-10 px-4 max-w-3xl mx-auto">
+  <div id="faq" className="bg-black text-white py-10 px-4 max-w-3xl mx-auto">
     <h1 className="text-3xl font-bold text-center mb-2">
       Everything You Need To Know
     </h1>
