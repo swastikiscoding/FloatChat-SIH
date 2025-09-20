@@ -1,6 +1,6 @@
 import { Waves } from "../ui/waves-background"
+import icon from "../../assets/shell_fevicon.svg"
 import { motion } from "framer-motion";
-
 import { useNavigate } from "react-router-dom";
 
 import { SignedIn, SignedOut, UserButton,useAuth } from "@clerk/clerk-react";
@@ -22,50 +22,63 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
     }
   }
   return (
+
       <div className="relative min-w-full h-[70vh] sm:h-[99vh] ">
-        
           <div className="absolute inset-0 z-0">
             <Waves/>
           </div>
 
           <div className="relative z-10 p-8">
             <motion.nav 
-          className="flex justify-between"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-            <motion.div 
-            className="flex gap-2 items-center"
-            whileHover={{ scale: 1.1 }}
-          >
-              <img src="../../../public/favicon.svg" alt=""  className="w-9 h-9"/>
-
-              <div className="font-semibold text-xl ">FloatChat</div>
-            </motion.div>
-            <motion.div 
-            className="hidden sm:flex text-white gap-8 pl-4 pr-4 pt-1 pb-1 rounded-2xl border-cyan-600 border-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-              <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer" onClick={onFaqClick}>FAQ</motion.div>
-            <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer" onClick={onFeaturesClick}>Features</motion.div>
-            <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer" onClick={onAboutClick}>About Us</motion.div>
-            </motion.div>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-            <SignedOut>
-              <motion.button 
-              whileHover={{ scale: 1.1, backgroundColor: "#0c6a85" }}
-              className="bg-[#095268] font-semibold pl-4 pr-4 rounded-2xl cursor-pointer"
-              onClick={() => navigate("/google-signin")}
+              className="grid grid-cols-3 items-center px-6 py-2"
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              Sign In
-            </motion.button>
-            </SignedOut>
-          </motion.nav>
+              {/* Left Column - Logo */}
+              <motion.div 
+                className="flex gap-2 items-center justify-start"
+                whileHover={{ scale: 1.04 }}
+              >
+                <img src={icon} alt="logo" className="w-9 h-9"/>
+                <div className="font-semibold text-xl">FloatChat</div>
+              </motion.div>
+
+              {/* Center Column - Menu (subgrid with 3 items) */}
+              <motion.div 
+                className="hidden sm:grid grid-cols-3 mx-10 gap-0 text-white pr-2 py-1 rounded-2xl border-cyan-600 border-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <motion.div className="cursor-pointer text-center" whileHover={{ scale: 1.2 }} onClick={onFaqClick}>
+                  FAQ
+                </motion.div>
+                <motion.div className="cursor-pointer text-center" whileHover={{ scale: 1.2 }} onClick={onFeaturesClick}>
+                  Features
+                </motion.div>
+                <motion.div className="cursor-pointer text-center" whileHover={{ scale: 1.2 }} onClick={onAboutClick}>
+                  About Us
+                </motion.div>
+              </motion.div>
+
+              {/* Right Column - Sign In / User */}
+              <div className="flex justify-end items-center gap-4 mb-2">
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <motion.button 
+                    whileHover={{ scale: 1.1, backgroundColor: "#0c6a85" }}
+                    className="bg-[#095268] font-semibold px-4 py-2 rounded-2xl cursor-pointer"
+                    onClick={() => navigate("/google-signin")}
+                  >
+                    Sign In
+                  </motion.button>
+                </SignedOut>
+              </div>
+            </motion.nav>
+
 
           <div className="flex flex-col justify-center items-center h-[60vh] sm:h-[75vh] text-white">
         <motion.h1 
