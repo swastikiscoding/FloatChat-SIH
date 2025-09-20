@@ -5,8 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 import { SignedIn, SignedOut, UserButton,useAuth } from "@clerk/clerk-react";
 
-
-const Navbar = () => {
+type NavbarProps = {
+  onFaqClick: () => void;
+  onFeaturesClick: () => void;
+  onAboutClick: () => void;
+};
+const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
   const navigate = useNavigate();
   const {isSignedIn}=useAuth()
 
@@ -17,16 +21,16 @@ const Navbar = () => {
       navigate("/google-signin"); 
     }
   }
-
   return (
-      <div className="relative min-w-full h-[70vh] sm:h-[99vh] bg-cover bg-center bg-no-repeat overflow-hidden">
-          <div className="absolute inset-0 z-0 ">
+      <div className="relative min-w-full h-[70vh] sm:h-[99vh] ">
+        
+          <div className="absolute inset-0 z-0">
             <Waves/>
           </div>
 
           <div className="relative z-10 p-8">
             <motion.nav 
-          className="flex justify-between pt-5 pl-8 pr-8"
+          className="flex justify-between"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -35,7 +39,7 @@ const Navbar = () => {
             className="flex gap-2 items-center"
             whileHover={{ scale: 1.1 }}
           >
-              <span className="text-cyan-600 text-2xl">🌊</span>
+              <img src="../../../public/favicon.svg" alt=""  className="w-9 h-9"/>
 
               <div className="font-semibold text-xl ">FloatChat</div>
             </motion.div>
@@ -45,9 +49,9 @@ const Navbar = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-              <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer">FAQ</motion.div>
-            <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer">Features</motion.div>
-            <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer">About Us</motion.div>
+              <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer" onClick={onFaqClick}>FAQ</motion.div>
+            <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer" onClick={onFeaturesClick}>Features</motion.div>
+            <motion.div whileHover={{ scale: 1.2 }} className="cursor-pointer" onClick={onAboutClick}>About Us</motion.div>
             </motion.div>
             <SignedIn>
               <UserButton />
@@ -70,7 +74,7 @@ const Navbar = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          Dive into the Ocean of Data..
+          Dive into the Ocean of Data
         </motion.h1>
 
         <motion.h2 

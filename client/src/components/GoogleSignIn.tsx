@@ -19,8 +19,8 @@ export default function GoogleSignInButton() {
     }
   };
   return (
-    <div className='w-full h-screen' style={{backgroundImage:`url(${loginbg})`,display: "flex", flexDirection: "column", alignItems: "center"}}>
-      <div className="border-2 border-cyan-500 bg-black  pr-20 pb-10 rounded-md shadow-xl shadow-cyan-500/50 mt-10">
+    <div className='w-full h-screen flex' style={{backgroundImage:`url(${loginbg})`,display: "flex", flexDirection: "column", alignItems: "center"}}>
+      <div className="border-2 border-cyan-500 bg-black pr-20 pb-10 rounded-md shadow-xl shadow-cyan-500/50  mt-20 sm:mt-10">
         <div className="ml-2 mt-2">
           <span className="text-cyan-400 text-3xl mr-1">🌊</span>
           <span className="font-semibold text-2xl">FloatChat</span>

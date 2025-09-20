@@ -6,20 +6,40 @@ import "./App.css";
 import Navbar from "./components/landing-page/Navbar";
 import Mainfeatures from "./components/landing-page/Mainfeatures";
 import Mode from "./components/landing-page/Mode";
+import { useRef } from "react";
 
 function App() {
+  const faqRef = useRef<HTMLDivElement | null>(null);
+  const featuresRef = useRef<HTMLDivElement | null>(null);
+  const aboutRef = useRef<HTMLDivElement | null>(null);
+  const modeRef=useRef<HTMLDivElement | null>(null);
+  const navRef=useRef<HTMLDivElement | null>(null);
+
+  const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
   return (
     <>
-      <Navbar />
-            <div className="h-[2px] w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-400 opacity-70 " />
-      <div className="mt-20 "><Mainfeatures /></div>
-      <div className="mb-15">
+      <div ref={navRef}>
+        <Navbar
+          onFaqClick={() => scrollTo(faqRef)}
+          onFeaturesClick={() => scrollTo(featuresRef)}
+          onAboutClick={() => scrollTo(aboutRef)}
+        />
+      </div>
+      <Mainfeatures />
+      <div className="mb-15" ref={featuresRef}>
         <Features />
       </div>
-      <Mode />
-      <Faq />
-      <DevTeam />
-      <Footer />
+      <div ref={modeRef}><Mode /></div>
+      <div ref={faqRef}><Faq /></div>
+      <div ref={aboutRef}><DevTeam /></div>
+      <Footer
+        onFaqClick={() => scrollTo(faqRef)}
+        onFeaturesClick={() => scrollTo(featuresRef)} 
+        onModesClick={()=>scrollTo(modeRef)}
+        onNavClick={()=>scrollTo(navRef)}
+      />
     </>
   );
 }
