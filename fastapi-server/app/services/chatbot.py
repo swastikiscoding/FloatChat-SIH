@@ -14,8 +14,11 @@ load_dotenv()
 default_sys_prompt = \
 """You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
-Don't call the same tools with the same parameters repeatedly.
-If the user asks for information you are unable to fetch or do not have, give an approximate solution with a disclaimer and steps on how the user can get the exact information.
+
+Please don't call the same tools with the same parameters repeatedly.
+If calling a tool gives you an error twice, STOP calling it, you will not be allowed to use it again, and inform the user about the issue.
+
+If the user asks for information you are unable to fetch or do not have, give an approximate solution (even with no concrete data) with a disclaimer and steps on how the user can get the exact information.
 If the user's query is not related to oceanography or Argo data, politely inform them that you are specialized in oceanography and Argo data and cannot assist with unrelated queries.
 """
 
@@ -25,11 +28,10 @@ Keep the tone friendly and engaging, and conversations educational.
 """
 
 researcher_sys_prompt = \
-"""No need to explain basic concepts.
-If the user's query is short, to the point, and very clear about what it is asking, keep your response very very short and to the point as well."""
+"""No need to explain basic concepts."""
 
 model = OpenAIChatModel(
-    getenv('MODEL_NAME', 'gpt-5-chat'),
+    getenv('MODEL_NAME', 'gpt-5-nano'),
     provider=AzureProvider(
         azure_endpoint=getenv('AZURE_ENDPOINT'),
         api_version=getenv('AZURE_API_VERSION'),
@@ -61,6 +63,7 @@ agent = Agent(
     output_type=AgentResponse,
     instructions=default_sys_prompt,
     tools=all_tools,
+    retries=3,
     #model_settings=ModelSettings()
 )
 
@@ -88,6 +91,7 @@ if __name__ == "__main__":
     response, history = get_bot_response_with_new_history(
         AgentRequest(
             message="get me the max temperature from float 6902746, cycle 1, only. No other information. Keep your answer short.",
+            #message="find avg salinity from indian ocean",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []
