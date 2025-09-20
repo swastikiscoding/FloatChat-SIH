@@ -1,4 +1,4 @@
-from pydantic_ai import Tool, RunContext
+from pydantic_ai import Tool, RunContext, ModelRetry
 
 #, WebSearchTool, CodeExecutionTool
 #from pydantic_ai.common_tools.tavily import tavily_search_tool
@@ -26,6 +26,11 @@ fetcher = ArgopyDataFetcher(
 )
 
 
+website_down_msg = """The `erddap` website, the site from where you get your data, may be down.
+Ask the user to check at `https://erddap.ifremer.fr/erddap` themselves.
+If this is the second time you are getting this error, don't call this tool again."""
+
+
 def load_argo_profile(
     ctx: RunContext[AgentDependencies],
     float_id: int,
@@ -40,7 +45,16 @@ def load_argo_profile(
     float_id=6902755, cyc=[3, 12]
     """
     logger.info(f"Loading Argo profile data: float={float_id}, cyc={cyc}")
-    data = fetcher.profile(float_id, cyc).to_xarray()
+
+    try:
+        data = fetcher.profile(float_id, cyc).to_xarray()
+    except FileNotFoundError as e:
+        logger.error(f"Error: {e}\nWebsite may be down.")
+        raise ModelRetry(f"Error: {e}\n{website_down_msg}")
+    except Exception as e:
+        logger.error(f"Error loading Argo profile data: {e}")
+        raise ModelRetry(f"Error loading Argo profile data: {e}")
+    
     desc = f"Argo profile {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
@@ -64,7 +78,16 @@ def load_argo_float(
     Eg. 6902746
     """
     logger.info(f"Loading Argo float data: float={float_id}")
-    data = fetcher.float(float_id).to_xarray()
+
+    try:
+        data = fetcher.float(float_id).to_xarray()
+    except FileNotFoundError as e:
+        logger.error(f"Error: {e}\nWebsite may be down.")
+        raise ModelRetry(f"Error: {e}\n{website_down_msg}")
+    except Exception as e:
+        logger.error(f"Error loading Argo float data: {e}")
+        raise ModelRetry(f"Error loading Argo float data: {e}")
+    
     desc = f"Argo float {float_id}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
@@ -102,7 +125,15 @@ def load_argo_region(
     """
     box = lon + lat + dpt + (date if date else [])
     logger.info(f"Loading Argo region data: box={box}")
-    data = fetcher.region(box).to_xarray()
+    try:
+        data = fetcher.region(box).to_xarray()
+    except FileNotFoundError as e:
+        logger.error(f"Error: {e}\nWebsite may be down.")
+        raise ModelRetry(f"Error: {e}\n{website_down_msg}")
+    except Exception as e:
+        logger.error(f"Error loading Argo region data: {e}")
+        raise ModelRetry(f"Error loading Argo region data: {e}")
+    
     desc = f"Argo region {box}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
@@ -123,13 +154,23 @@ def run_duckdb(
 ) -> str:
     """Run DuckDB SQL query on the DataFrame.
     Args:
-        ctx: Pydantic AI agent RunContext
         dataset_ref: reference string, which refers to the DataFrame
         sql: the query to be executed using DuckDB
     """
     logger.info(f"Running DuckDB SQL on dataset={dataset_ref}, sql={sql}")
-    data = ctx.deps.get(dataset_ref)
-    result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
+
+    try:
+        data = ctx.deps.get(dataset_ref)
+    except Exception as e:
+        logger.error(f"Error retrieving dataset: {e}")
+        raise ModelRetry(f"Error retrieving dataset: {e}")
+    
+    try:
+        result = duckdb.query_df(df=data, virtual_table_name='dataset', sql_query=sql)
+    except Exception as e:
+        logger.error(f"Error running DuckDB SQL: {e}")
+        raise ModelRetry(f"Error running DuckDB SQL: {e}")
+    
     # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
     ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
     output = [
@@ -139,17 +180,22 @@ def run_duckdb(
     return '\n'.join(output)
 
 
-def get_sample_rows(
+def get_some_rows(
     ctx: RunContext[AgentDependencies],
     dataset_ref: str
 ) -> str:
     """Display at most 5 rows of the dataframe stored in dataset_ref.
     Args:
-        ctx: Pydantic AI agent RunContext
         dataset_ref: reference string to the DataFrame
     """
     logger.info(f"Displaying dataset={dataset_ref}")
-    dataset = ctx.deps.get(dataset_ref)
+
+    try:
+        dataset = ctx.deps.get(dataset_ref)
+    except Exception as e:
+        logger.error(f"Error retrieving dataset: {e}")
+        raise ModelRetry(f"Error retrieving dataset: {e}")
+
     return dataset.head().to_string()  # pyright: ignore[reportUnknownMemberType]
 
 
@@ -183,7 +229,7 @@ def plot_saved_data(
     elif kind == "bar":
         ax.bar(df[x], df[y])
     else:
-        raise ValueError(f"Unsupported plot kind: {kind}")
+        raise ModelRetry(f"Unsupported plot kind: {kind}. Try again with 'line', 'scatter', or 'bar'.")
     ax.set_xlabel(x)
     ax.set_ylabel(y)
     if title:
@@ -204,7 +250,7 @@ all_tools = [
     Tool(load_argo_profile, sequential=True),
     Tool(load_argo_region, sequential=True),
     Tool(run_duckdb, sequential=True),
-    Tool(get_sample_rows, sequential=True),
+    Tool(get_some_rows, sequential=True),
     #Tool(plot_saved_data, sequential=True), # don't trust the AI to use this just yet
 ]
 
