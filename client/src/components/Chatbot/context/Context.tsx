@@ -1,4 +1,11 @@
 import React, { createContext, useState, type ReactNode } from "react";
+import { axiosInstance } from "../../../utils/axiosInstance";
+import { useAuth } from "@clerk/clerk-react";
+
+interface Message {
+  userMessage: string;
+  AIMessage: string;
+}
 
 interface ContextType {
   askQue: (prompt?: string) => Promise<void>;
@@ -12,6 +19,9 @@ interface ContextType {
   showResult: boolean;
   ques: string;
   newChat: () => void;
+  currentChatId: string | null;
+  messages: Message[];
+  loadChat: (chatId: string) => Promise<void>;
 }
 
 interface ProviderProps {
@@ -22,19 +32,15 @@ interface ProviderProps {
 export const Context = createContext<ContextType>({} as ContextType);
 
 const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
+  const { getToken } = useAuth();
   const [ques, setques] = useState("");
   const [result, setresult] = useState("");
   const [recentPrompt, setrecentPrompt] = useState("");
   const [loading, setloading] = useState(false);
   const [prevPrompts, setprevPrompts] = useState<string[]>([]);
   const [showResult, setshowResult] = useState(false);
-
-  // Helpers
-  const delayPara = (index: number, nextWord: string) => {
-    setTimeout(() => {
-      setresult((prev) => prev + nextWord);
-    }, 75 * index);
-  };
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const newChat = () => {
     setloading(false);
@@ -42,7 +48,34 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     setresult("");
     setques("");
     setrecentPrompt("");
+    setCurrentChatId(null);
+    setMessages([]);
     console.log("New chat started");
+  };
+
+  // Load existing chat
+  const loadChat = async (chatId: string) => {
+    try {
+      const token = await getToken();
+      const response = await axiosInstance.get(`/chat/${chatId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const chatData = response.data;
+      setCurrentChatId(chatId);
+      setMessages(chatData.chat);
+      setshowResult(true);
+      
+      // Set the last message as result for display
+      if (chatData.chat.length > 0) {
+        const lastMessage = chatData.chat[chatData.chat.length - 1];
+        setresult(lastMessage.AIMessage);
+        setrecentPrompt(lastMessage.userMessage);
+      }
+    } catch (error) {
+      console.error("Error loading chat:", error);
+    }
   };
 
   // Main Function: askQue
@@ -57,43 +90,41 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     setrecentPrompt(currentPrompt);
     setprevPrompts((prev) => [...prev, currentPrompt]);
 
-    // Payload for API
-    // const payload = {
-    //   contents: [
-    //     {
-    //       parts: [{ text: currentPrompt }],
-    //     },
-    //   ],
-    // };
-
-    // Placeholder: Replace with API call
-    let finalResponse = "";
     try {
+      // Use existing chatId or create new chat
+      const chatId = currentChatId || 'new';
       
-      // const response = await fetch(URL, {
-      //   method: "POST",
-      //   body: JSON.stringify(payload),
-      // });
-      // const data = await response.json();
-      // finalResponse = data.candidates[0].content.parts[0].text;
+      const token = await getToken();
+      const response = await axiosInstance.post(`/chat/${chatId}`, {
+        message: currentPrompt,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      // Dummy response (for testing UI without API)
+      const chatData = response.data;
+      
+      // Update chat ID if it was a new chat
+      if (!currentChatId) {
+        setCurrentChatId(chatData.chatId);
+      }
+      
+      // Update messages
+      setMessages(chatData.chat);
+      
+      // Get the latest AI response
+      const latestMessage = chatData.chat[chatData.chat.length - 1];
+      const aiResponse = latestMessage.AIMessage;
+
+      // Use the raw response without HTML formatting for ReactMarkdown
+      setresult(aiResponse);
+
     } catch (error) {
       console.error("Error fetching response:", error);
-      finalResponse = "⚠️ Something went wrong. Please try again.";
+      const errorMessage = "⚠️ Something went wrong. Please try again.";
+      setresult(errorMessage);
     }
-
-    // Format bold and line breaks 
-    let formattedResponse = finalResponse
-      .split("**")
-      .map((chunk, i) => (i % 2 === 1 ? `<b>${chunk}</b>` : chunk))
-      .join("");
-
-    formattedResponse = formattedResponse.replace(/\*/g, "<br/>");
-
-    // Simulate typing effect
-    const words = formattedResponse.split(" ");
-    words.forEach((word, i) => delayPara(i, word + " "));
 
     setloading(false);
     setques("");
@@ -111,6 +142,9 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     showResult,
     ques,
     newChat,
+    currentChatId,
+    messages,
+    loadChat,
   };
 
   return (
