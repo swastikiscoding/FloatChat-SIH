@@ -63,15 +63,15 @@ const ChatSection: React.FC = () => {
             {/* Suggestion Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-5 mt-8 ">
               {[
-                "What is the current surface temperature and salinity at coordinates [lat, lon]?",
-                "What are the current ocean currents (speed and direction) in this area?",
-                "What is the water pressure and temperature profile at 50 meters depth?",
-                "How has the sea surface temperature changed over the past week at this location?",
+                "Sea temperature and salinity trends in the central Philippine Sea (126°-130°E, 10°-15°N) over the past month.",
+                "What is the surface temperature and salinity at -64.870163 longitude, 42.330696 latitude?",
+                "Comparison of temperature profiles between the eastern and western equatorial Indian Ocean.",
+                "Sea surface temperature changes over the past week at western equatorial Indian Ocean.",
               ].map((text, idx) => (
                 <div
                   key={idx}
                   onClick={() => handleCardClick(text)}
-                  className="bg-[#0f111a] rounded-xl p-6 text-white shadow-[0_0_20px_rgba(0,255,255,0.2)] border border-cyan-400/20 hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] transition-shadow duration-300"
+                  className="bg-[#0f111a] cursor-pointer rounded-xl p-6 text-white shadow-[0_0_20px_rgba(0,255,255,0.2)] border border-cyan-400/20 hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] transition-shadow duration-300"
                 >
                   {text}
                 </div>
