@@ -22,7 +22,7 @@ export default function GoogleSignInButton() {
   return (
     <div className='w-full h-screen flex items-center justify-center bg-gray-950'>
       <div className="h-3/7 w-3/14 rounded-4xl flex flex-col border border-cyan-400 
-                bg-gradient-to-b from-black via-gray-900 to-gray-600/30
+                bg-gradient-to-b from-black via-gray-900/90 to-gray-600/25
                 shadow-[6px_6px_20px_-2px_rgba(34,211,238,0.5)]">
         <div className="flex gap-2 items-center rounded-t-4xl h-2/10 p-4 mt-1 mb-1">
           <img src={icon} alt="" className="w-7 h-7"/>
