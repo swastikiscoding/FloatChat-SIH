@@ -16,9 +16,11 @@ import io
 import base64
 
 
-website_down_msg = """The `erddap` website, the site from where you get your data, may be down.
+alternate_sources = ['argovis']  # 'erddap' is the default source
+
+website_down_msg = f"""The `erddap` website, the site from where you get your data, may be down.
 Ask the user to check at `https://erddap.ifremer.fr/erddap` themselves.
-If this is the second time you are getting this error, don't call this tool again."""
+Don't use this source again. Use {[f"`{src}`" for src in alternate_sources]} instead."""
 
 virtual_table_name = 'db'  # used in duckdb SQL queries
 
@@ -28,25 +30,28 @@ def load_argo_profile(
     float_id: int,
     cyc: int | list[int],
     dataset: str = 'phy',
+    source: str = 'erddap',
 ) -> str:
     """Load Argo data for a specific profile.
     Args:
         float_id: the WMO identifier of the float
         cyc: the cycle number or list of cycle numbers
         dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
+        source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
+            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there.
     
     For instance, to retrieve temperature (physical property) data for the 12th profile of float WMO 6902755:
-    float_id=6902755, cyc=12, dataset='phy'
+    float_id=6902755, cyc=12
 
     For more than one profile:
-    float_id=6902755, cyc=[3, 12], dataset='phy'
+    float_id=6902755, cyc=[3, 12]
     """
-    logger.info(f"Loading Argo profile data: float={float_id}, cyc={cyc}")
+    logger.info(f"Loading Argo profile data: float={float_id}, cyc={cyc}, dataset={dataset}, source={source}")
 
     try:
         fetcher = ArgopyDataFetcher(
             mode='standard',
-            src='erddap',
+            src=source, # 'erddap' or 'argovis'
             ds=dataset # 'phy' or 'bcg'
         )
         data = fetcher.profile(float_id, cyc).to_xarray()
@@ -74,21 +79,24 @@ def load_argo_float(
     ctx: RunContext[AgentDependencies],
     float_id: int | list[int],
     dataset: str = 'phy',
+    source: str = 'erddap',
 ) -> str:
     """Load Argo data for a specific float.
     Args:
         float_id: the WMO identifier(s) of the float. Use a list to load multiple floats.
         dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
+        source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
+            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there.
     
     Eg. float_id=[6902746, 6902755] (for multiple floats)
     Eg. float_id=6902746 (for a single float)
     """
-    logger.info(f"Loading Argo float data: float={float_id}")
+    logger.info(f"Loading Argo float data: float={float_id}, dataset={dataset}, source={source}")
 
     try:
         fetcher = ArgopyDataFetcher(
             mode='standard',
-            src='erddap',
+            src=source, # 'erddap' or 'argovis'
             ds=dataset # 'phy' or 'bcg'
         )
         data = fetcher.float(float_id).to_xarray()
@@ -119,6 +127,7 @@ def load_argo_region(
     dpt: list[float],
     date: list[str] | None = None,
     dataset: str = 'phy',
+    source: str = 'erddap',
 ) -> str:
     """Load Argo data for a specific region.
     The region is defined by:
@@ -127,6 +136,8 @@ def load_argo_region(
         dpt: list of two floats [dpt_min, dpt_max]
         date: optional list of two strings [date_min, date_max] in 'YYYY-MM-DD' format
         dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
+        source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
+            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there.
     
     If `date` is not specified, the entire time series is fetched.
 
@@ -138,11 +149,11 @@ def load_argo_region(
     You are allowed to use smaller boxes for approximation.
     """
     box = lon + lat + dpt + (date if date else [])
-    logger.info(f"Loading Argo region data: box={box}")
+    logger.info(f"Loading Argo region data: box={box}, dataset={dataset}, source={source}")
     try:
         fetcher = ArgopyDataFetcher(
             mode='standard',
-            src='erddap',
+            src=source, # 'erddap' or 'argovis'
             ds=dataset # 'phy' or 'bcg'
         )
         data = fetcher.region(box).to_xarray()
@@ -172,13 +183,18 @@ def run_duckdb(
     sql: str
 ) -> str:
     f"""Run DuckDB SQL query on the DataFrame.
-    Note that the virtual table name used in DuckDB SQL must be {virtual_table_name}.
     Args:
         dataframe_ref: reference string, which refers to the DataFrame
         sql: the query to be executed using DuckDB
     
+    The DataFrame is made available as a virtual table named `{virtual_table_name}`.
+    You can use standard SQL syntax to query the data.
     Example SQL query:
-    SELECT AVG(TEMP) FROM {virtual_table_name} WHERE PRES >= 490.0;
+        SELECT AVG(TEMP) FROM {virtual_table_name} WHERE PRES >= 490.0;
+    Make sure that the table name `{virtual_table_name}` is used in your SQL query.
+    Using `{dataframe_ref}` as table name will result in an error! `SELECT * FROM {dataframe_ref}` is INVALID SQL and won't work!
+
+    Note: The result of the query is stored as a new DataFrame reference, not given directly to you.
     """
     logger.info(f"Running DuckDB SQL on dataframe={dataframe_ref}, sql={sql}")
 
@@ -191,6 +207,10 @@ def run_duckdb(
     try:
         result = duckdb.query_df(df=data, virtual_table_name=virtual_table_name, sql_query=sql)
     except Exception as e:
+        if 'Catalog Error: Table' in str(e) and virtual_table_name not in sql:
+            if dataframe_ref in sql:
+                raise ModelRetry(f"Error: You must use the table name `{virtual_table_name}` in your SQL query, not `{dataframe_ref}`.")
+            raise ModelRetry(f"Error: You must use the table name `{virtual_table_name}` in your SQL query, not whatever you used.")
         logger.error(f"Error running DuckDB SQL: {e}")
         raise ModelRetry(f"Error running DuckDB SQL: {e}")
     
@@ -232,7 +252,6 @@ def plot_saved_data(
 ) -> None:
     """Plot saved data to show to the user using matplotlib.
     Args:
-        ctx: Pydantic AI agent RunContext
         name: reference string to the DataFrame
         x: column name for x-axis
         y: column name for y-axis
