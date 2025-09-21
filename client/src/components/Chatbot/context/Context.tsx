@@ -1,5 +1,6 @@
 import React, { createContext, useState, type ReactNode } from "react";
 import { axiosInstance } from "../../../utils/axiosInstance";
+import { useAuth } from "@clerk/clerk-react";
 
 interface Message {
   userMessage: string;
@@ -31,6 +32,7 @@ interface ProviderProps {
 export const Context = createContext<ContextType>({} as ContextType);
 
 const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
+  const { getToken } = useAuth();
   const [ques, setques] = useState("");
   const [result, setresult] = useState("");
   const [recentPrompt, setrecentPrompt] = useState("");
@@ -54,7 +56,12 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
   // Load existing chat
   const loadChat = async (chatId: string) => {
     try {
-      const response = await axiosInstance.get(`/chat/${chatId}`);
+      const token = await getToken();
+      const response = await axiosInstance.get(`/chat/${chatId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const chatData = response.data;
       setCurrentChatId(chatId);
       setMessages(chatData.chat);
@@ -87,8 +94,13 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
       // Use existing chatId or create new chat
       const chatId = currentChatId || 'new';
       
+      const token = await getToken();
       const response = await axiosInstance.post(`/chat/${chatId}`, {
         message: currentPrompt,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const chatData = response.data;

@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Context } from "../context/Context.tsx";
 import { axiosInstance } from "../../../utils/axiosInstance";
+import { useAuth } from "@clerk/clerk-react";
 
 interface Chat {
   _id: string;
@@ -11,14 +12,20 @@ interface Chat {
 
 const ChatHistory = () => {
    const { loadChat, newChat, currentChatId } = useContext(Context);
+   const { getToken } = useAuth();
    const [chatHistory, setChatHistory] = useState<Chat[]>([]);
    const [loading, setLoading] = useState(false);
 
    // Fetch chat history from API
-   const fetchChatHistory = async () => {
+   const fetchChatHistory = useCallback(async () => {
      try {
        setLoading(true);
-       const response = await axiosInstance.get('/chat/all');
+       const token = await getToken();
+       const response = await axiosInstance.get('/chat/all', {
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+       });
        // Ensure we have a valid array
        const chats = Array.isArray(response.data.chats) ? response.data.chats : [];
        setChatHistory(chats);
@@ -28,19 +35,19 @@ const ChatHistory = () => {
      } finally {
        setLoading(false);
      }
-   };
+   }, [getToken]);
 
    // Load chat history on component mount
    useEffect(() => {
      fetchChatHistory();
-   }, []);
+   }, [fetchChatHistory]);
 
    // Refresh chat history when a new chat is created
    useEffect(() => {
      if (currentChatId) {
        fetchChatHistory();
      }
-   }, [currentChatId]);
+   }, [currentChatId, fetchChatHistory]);
 
    const handleChatClick = async (chatId: string) => {
      if (loading) return;
