@@ -26,7 +26,7 @@ export default function GoogleSignInButton() {
           bg-gradient-to-b from-black via-gray-900/90 to-gray-600/25
           shadow-[6px_6px_20px_-2px_rgba(34,211,238,0.5)]
           w-full max-w-xs h-auto px-4 py-6
-          sm:w-3/14 sm:h-3/7 sm:max-w-none sm:px-0 sm:py-0"
+          sm:w-108/480 sm:h-3/7 sm:max-w-none sm:px-0 sm:py-0"
       >
         <div className="flex gap-2 items-center rounded-t-4xl p-2 mt-0 mb-2 sm:p-4 sm:mt-1 sm:mb-1">
           <img src={icon} alt="" className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -37,7 +37,7 @@ export default function GoogleSignInButton() {
           <div className="mb-3 rounded-xl w-full flex justify-center">
             <button
               onClick={handleGoogleSignIn}
-              className="p-3 my-4 flex justify-center items-center text-gray-200 sm:w-auto
+              className="p-3 my-4 sm:mt-4 flex justify-center items-center text-gray-200 sm:w-auto
                         rounded-2xl bg-gradient-to-b from-gray-600 to-black
                         hover:scale-104 hover:text-gray-300 transition-transform duration-200
                         shadow-[3px_3px_10px_-1px_rgba(34,211,238,0.4)]"
