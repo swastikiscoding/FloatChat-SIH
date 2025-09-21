@@ -1,0 +1,194 @@
+Traceback (most recent call last):
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in _call_
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\fastapi\applications.py", line 1054, in _call_
+    await super()._call_(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\applications.py", line 113, in _call_
+    await self.middleware_stack(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in _call_
+    raise exc
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in _call_
+    await self.app(scope, receive, _send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in _call_
+    await self.app(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in _call_
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\routing.py", line 716, in _call_
+    await self.middleware_stack(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\fastapi\routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\fastapi\routing.py", line 215, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\starlette\concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2476, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 967, in run
+    result = context.run(func, *args)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\app\api\chat_api.py", line 10, in chat_endpoint
+    return get_bot_response_with_new_history(request, history)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\app\services\chatbot.py", line 77, in get_bot_response_with_new_history
+    response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
+                                              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\agent\abstract.py", line 317, in run_sync
+    return get_event_loop().run_until_complete(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.run(
+        ^^^^^^^^^
+    ...<12 lines>...
+        )
+        ^
+    )
+    ^
+  File "C:\Users\Acer\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\agent\abstract.py", line 218, in run
+    async for node in agent_run:
+    ...<4 lines>...
+                await event_stream_handler(_agent_graph.build_run_context(agent_run.ctx), stream)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\run.py", line 150, in _anext_
+    next_node = await self.graph_run.anext_()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_graph\graph.py", line 758, in _anext_
+    return await self.next(self._next_node)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_graph\graph.py", line 731, in next
+    self._next_node = await node.run(ctx)
+                      ^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 494, in run
+    async with self.stream(ctx):
+               ~~~~~~~~~~~^^^^^
+  File "C:\Users\Acer\AppData\Local\Programs\Python\Python313\Lib\contextlib.py", line 221, in _aexit_
+    await anext(self.gen)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 508, in stream
+    async for _event in stream:
+        pass
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 575, in _run_stream
+    async for event in self._events_iterator:
+        yield event
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 543, in _run_stream
+    async for event in self._handle_tool_calls(ctx, tool_calls):
+        yield event
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 588, in _handle_tool_calls
+    async for event in process_function_tools(
+    ...<2 lines>...
+        yield event
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 760, in process_function_tools
+    async for event in _call_tools(
+    ...<8 lines>...
+        yield event
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 855, in _call_tools
+    if event := await handle_call_or_result(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    ):
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 840, in handle_call_or_result
+    (await coro_or_task) if inspect.isawaitable(coro_or_task) else coro_or_task.result()
+     ^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_agent_graph.py", line 895, in _call_tool
+    tool_result = await tool_manager.handle_call(tool_call, usage_limits=usage_limits)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_tool_manager.py", line 112, in handle_call
+    return await self._call_tool_traced(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_tool_manager.py", line 236, in _call_tool_traced
+    tool_result = await self._call_tool(call, allow_partial, wrap_validation_errors, usage_limits)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_tool_manager.py", line 162, in _call_tool
+    result = await self.toolset.call_tool(name, args_dict, ctx, tool)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\toolsets\combined.py", line 90, in call_tool
+    return await tool.source_toolset.call_tool(name, tool_args, ctx, tool.source_tool)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\toolsets\combined.py", line 90, in call_tool
+    return await tool.source_toolset.call_tool(name, tool_args, ctx, tool.source_tool)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\toolsets\function.py", line 297, in call_tool
+    return await tool.call_func(tool_args, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_function_schema.py", line 55, in call
+    return await run_in_executor(function, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\pydantic_ai\_utils.py", line 47, in run_in_executor
+    return await run_sync(wrapped_func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2476, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 967, in run
+    result = context.run(func, *args)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\app\services\tools.py", line 43, in load_argo_profile
+    data = fetcher.profile(float_id, cyc).to_xarray()
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\fetchers.py", line 688, in to_xarray
+    return self.load(force=True, **kwargs).data
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\fetchers.py", line 886, in load
+    self._data = self._to_xarray(**kwargs)
+                 ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\fetchers.py", line 673, in _to_xarray
+    xds = self.fetcher.to_xarray(**kwargs)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\data_fetchers\erddap_data.py", line 583, in to_xarray
+    results = self.fs.open_dataset(URI[0])
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\stores\implementations\http.py", line 344, in open_dataset
+    target, _ = load_in_memory(
+                ~~~~~~~~~~~~~~^
+        url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\stores\implementations\http.py", line 259, in load_in_memory
+    data = self.download_url(url, **dwn_opts)
+  File "E:\PROGRAMMING\FloatChat-SIH\fastapi-server\.venv\Lib\site-packages\argopy\stores\implementations\http.py", line 177, in download_url
+    raise FileNotFoundError(url)
+FileNotFoundError: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number="6902746"&cycle_number="1"&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
