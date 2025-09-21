@@ -22,7 +22,7 @@ function Input({ className, onSubmit, ...props }: InputProps) {
     <div className="relative w-full">
       <textarea
         rows={1}
-        placeholder="Argo data made easy..."
+        placeholder="Ask about sea temperature, salinity, or trends..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className={cn(

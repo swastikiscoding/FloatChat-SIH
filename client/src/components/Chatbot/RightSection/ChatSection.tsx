@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { Link } from "react-router-dom";
+import { Earth, EarthIcon, Home } from "lucide-react";
 import BotReply from "./BotReply";
 import UserQuerry from "./UserQuery.tsx";
 import { Context } from "../context/Context.tsx";
@@ -39,6 +41,13 @@ const ChatSection: React.FC = () => {
       {/* Top Navbar */}
       <div className="flex items-center justify-between border-b border-gray-800 pb-2">
         <h1 className="text-2xl font-bold">FloatChat</h1>
+        <Link 
+          to="/dashboard" 
+          className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+        >
+          <EarthIcon size={16} />
+          Dashboard
+        </Link>
         {/* <img
           className="w-12 h-12 rounded-full border-2 border-gray-600"
           src="https://media.licdn.com/dms/image/D4D03AQH1b0nX4nXr4Q/profile-displayphoto-shrink_800_800/0/1683296326461?e=1701302400&v=beta&t=Yk2f1y8kqf1p3p5iU1K5E6mM2z7c3c3F4b3F6F6F6F6"
