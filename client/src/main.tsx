@@ -37,7 +37,9 @@ const router = createBrowserRouter([
   {
     path: "/chatbot",
     element: (
-      <Chatbot/>
+      <PrivateRoute>
+        <Chatbot/>
+      </PrivateRoute>
     ),
   },
 ]);

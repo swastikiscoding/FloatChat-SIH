@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import {Schema} from 'mongoose';
 
 const chatSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
     messages: [
         {
             AIMessage: {type: String, required: true},

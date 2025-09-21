@@ -21,7 +21,9 @@ export const postMessage = async (req, res) => {
         let { chatId } = req.params;
         console.log("Received message:", message, "for chatId:", chatId);
         if(chatId === 'new'){
-            const chat = new Chat({ messages: [] });
+            // Create title from first message (truncate if too long)
+            const chatTitle = message.length > 50 ? message.slice(0, 50) + "..." : message;
+            const chat = new Chat({ messages: [] , title: chatTitle});
             await chat.save();
             chatId = chat._id;
         }
@@ -30,7 +32,7 @@ export const postMessage = async (req, res) => {
         if(!chat){
             return res.status(404).json({ error: "Chat not found" });
         }
-        const context = [...chat.messages].size > 5 ? [...chat.messages].slice(-5) : [...chat.messages];
+        const context = chat.messages.length > 5 ? chat.messages.slice(-5) : chat.messages;
         const contextMessage = context.map(msg => `User Message: ${msg.userMessage}\nAI Message: ${msg.AIMessage}`).join("\n");
         console.log("Context for AI:", contextMessage);
         const response = await axiosInstance.post('/chat', {
@@ -48,6 +50,25 @@ export const postMessage = async (req, res) => {
 
     }catch(error){
         console.error("Error posting message:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+export const fetchAllChats = async (req, res) => {
+    try{
+        const chats = await Chat.find({}).sort({ updatedAt: -1 });
+        
+        // Transform chats to include title with fallback
+        const transformedChats = chats.map(chat => ({
+            _id: chat._id,
+            title: chat.title || (chat.messages.length > 0 ? chat.messages[0].userMessage : "New Chat"),
+            createdAt: chat.createdAt,
+            updatedAt: chat.updatedAt
+        }));
+        
+        res.status(200).json({message: "Chats fetched successfully", chats: transformedChats});
+    }catch(error){
+        console.error("Error fetching chats:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }

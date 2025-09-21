@@ -8,7 +8,7 @@ import {
 import ModeSelect from "./ModeSelect"
 import { Plus, Shell } from "lucide-react"
 import ChatHistory from "./ChatHistory"
-import { NavUser } from "./nav-user"
+import { UserButton } from "@clerk/clerk-react"
 import React from "react"
 import { Context } from "../context/Context.tsx"
 
@@ -27,14 +27,7 @@ export function AppSidebar() {
 
         {/* New Chat button */}
 
-        <button onClick={newChat}
-          className="flex items-center justify-center gap-3.5 px-1 p-2 mt-9 mb-2 rounded-lg text-gray-200 transition-all duration-200 hover:scale-[1.02] hover:bg-white/10 hover:border-white/70"
-          >
-          <Plus className="w-5 h-5 text-cyan-40" />
-          <span className="pl-0 w-8/10 group-data-[collapsible=icon]:hidden text-left"> {/*hides*/}
-            New chat
-          </span>
-        </button>
+       
 
         {/* Mode Select stays visible, but only show Star icon when collapsed */}
         <ModeSelect />
@@ -52,15 +45,24 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
-        {/* Show only avatar on collapse */}
-        <NavUser
-          user={{
-            name: "shadcn",
-            email: "m@example.com",
-            avatar: "/avatars/shadcn.jpg",
-          }}
-        />
+      <SidebarFooter className="bg-gray-950">
+        {/* Clerk UserButton with responsive design */}
+        <div className="flex items-center justify-center p-2 mx-2 mb-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors group-data-[collapsible=icon]:mx-1">
+          <UserButton 
+            appearance={{
+              elements: {
+                avatarBox: "w-8 h-8 rounded-lg border border-cyan-400/30",
+                userButtonPopoverCard: "bg-gray-900 border border-gray-700 shadow-lg",
+                userButtonPopoverActions: "bg-gray-900",
+                userButtonPopoverActionButton: "text-gray-300 hover:bg-gray-800 hover:text-white transition-colors",
+                userButtonPopoverActionButtonText: "text-gray-300",
+                userButtonPopoverFooter: "bg-gray-900 border-t border-gray-700",
+                userButtonPopoverActionButtonIcon: "text-cyan-400",
+              }
+            }}
+            showName={false}
+          />
+        </div>
       </SidebarFooter>
     </Sidebar>
   )
