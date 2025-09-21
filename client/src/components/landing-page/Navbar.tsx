@@ -30,7 +30,7 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
 
           <div className="relative z-10">
             <motion.nav 
-              className="grid grid-cols-3 items-center px-6 py-2"
+              className="grid grid-cols-2 sm:grid-cols-3 items-center px-6 py-2"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
@@ -46,7 +46,8 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
 
               {/* Center Column - Menu (subgrid with 3 items) */}
               <motion.div 
-                className="hidden sm:grid grid-cols-3 mx-10 gap-0 text-white pr-2 py-1 rounded-2xl border-cyan-600 border-2"
+                 className="hidden sm:grid grid-cols-3 mx-10 gap-0 text-white pr-2 py-1 
+                 rounded-2xl border-cyan-600 border-2 sm:max-[800px]:w-[200px] max-[970px]:text-sm"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
