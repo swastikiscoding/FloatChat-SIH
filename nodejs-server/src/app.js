@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { profileRouter } from './routes/profile.route.js';
+import { chatRouter } from './routes/chat.route.js';
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/profiles", profileRouter);
+app.use("/api/chat", chatRouter);
 
 export {app};
