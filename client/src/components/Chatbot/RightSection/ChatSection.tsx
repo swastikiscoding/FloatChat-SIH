@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
-import { Earth, EarthIcon, Home } from "lucide-react";
+import { EarthIcon } from "lucide-react";
 import BotReply from "./BotReply";
 import UserQuerry from "./UserQuery.tsx";
 import { Context } from "../context/Context.tsx";
