@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
+import { useUser } from "@clerk/clerk-react";
 import BotReply from "./BotReply";
-import UserQuerry from "./UserQuerry";
+import UserQuerry from "./UserQuery.tsx";
 import { Context } from "../context/Context.tsx";
 
 const ChatSection: React.FC = () => {
+  const { user, isLoaded } = useUser();
   const {
     askQue,
     recentPrompt,
@@ -11,12 +13,24 @@ const ChatSection: React.FC = () => {
     result,
     loading,
     showResult,
+    messages,
   } = useContext(Context);
 
   // Handle card click
   const handleCardClick = async (prompt: string) => {
     setrecentPrompt(prompt);
     await askQue(prompt);
+  };
+
+  // Get user's first name with fallback
+  const getGreeting = () => {
+    if (!isLoaded) {
+      return "Hello...";
+    }
+    if (user?.firstName) {
+      return `Hello, ${user.firstName}.`;
+    }
+    return "Hello, User.";
   };
 
   return (
@@ -38,8 +52,8 @@ const ChatSection: React.FC = () => {
           <>
             {/* Greeting */}
             <div className="text-center mt-10">
-              <h2 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-100 via-cyan-700 to-blue-900 bg-clip-text text-transparent">
-                Hello, User.
+              <h2 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-100 via-cyan-700 to-blue-900 bg-clip-text text-transparent transition-all duration-300">
+                {getGreeting()}
               </h2>
               <p className="text-gray-400 mt-4 text-lg">
                 How can I help you today?
@@ -67,11 +81,29 @@ const ChatSection: React.FC = () => {
         ) : (
           // Result Section
           <div className="mt-6 space-y-3 overflow-y-auto max-h-[70vh]">
-            {/* User message */}
-            {recentPrompt && <UserQuerry Text={recentPrompt} />}
-
-            {/* Bot reply */}
-            {result && <BotReply Text={result} loading={loading} />}
+            {/* Display all chat messages if available */}
+            {messages.length > 0 ? (
+              messages.map((message, index) => (
+                <div key={index} className="space-y-3">
+                  <UserQuerry Text={message.userMessage} />
+                  <BotReply Text={message.AIMessage} />
+                </div>
+              ))
+            ) : (
+              // Fallback to current conversation
+              <>
+                {recentPrompt && <UserQuerry Text={recentPrompt} />}
+                <BotReply Text={result} loading={loading} />
+              </>
+            )}
+            
+            {/* Show loading for new message if messages exist but we're loading */}
+            {loading && messages.length > 0 && (
+              <>
+                {recentPrompt && <UserQuerry Text={recentPrompt} />}
+                <BotReply Text="" loading={true} />
+              </>
+            )}
           </div>
         )}
       </div>

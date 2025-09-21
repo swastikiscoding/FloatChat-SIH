@@ -37,7 +37,7 @@ const ModeSelect = () => {
                 selected ? "text-gray-200 text-sm" : "text-gray-400"
               }`}
             >
-              {selected || "Select a mode"}
+              {selected || "Student"}
             </span>
           </div>
 
