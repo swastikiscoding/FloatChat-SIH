@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import BotReply from "./BotReply";
-import UserQuerry from "./UserQuerry";
+import UserQuerry from "./UserQuery.tsx";
 import { Context } from "../context/Context.tsx";
 
 const ChatSection: React.FC = () => {
