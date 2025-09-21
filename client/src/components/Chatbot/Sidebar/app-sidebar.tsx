@@ -6,14 +6,11 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 import ModeSelect from "./ModeSelect"
-import { Plus, Shell } from "lucide-react"
+import {  Shell } from "lucide-react"
 import ChatHistory from "./ChatHistory"
 import { UserButton } from "@clerk/clerk-react"
-import React from "react"
-import { Context } from "../context/Context.tsx"
 
 export function AppSidebar() {
-  const { newChat } = React.useContext(Context);
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="bg-gray-950">
