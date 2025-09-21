@@ -8,4 +8,5 @@ COPY pyproject.toml* uv.lock* ./
 RUN uv pip install --system --no-cache-dir
 # Copy the rest of the application
 COPY . .
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# uvicorn doesn't run directly for me... but this should work
+CMD ["uv", "run", "-m", "app.main"]

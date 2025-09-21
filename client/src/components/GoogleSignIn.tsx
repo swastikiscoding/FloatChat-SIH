@@ -1,6 +1,7 @@
 import { useSignIn } from "@clerk/clerk-react";
 import { FcGoogle } from "react-icons/fc";
 import icon from "../assets/shell_fevicon.svg"
+import clerkSvg from "../assets/clerkSvg.jpeg"
 
 export default function GoogleSignInButton() {
   const { signIn, isLoaded } = useSignIn();
@@ -28,26 +29,24 @@ export default function GoogleSignInButton() {
           <span className="font-semibold text-2xl">FloatChat</span>
         </div>
         <div className="rounded-b-4xl h-8/10 flex flex-col items-center justify-around">
-          <div className="text-xl mt-3 mb-2 p-1 text-cyan-400 font-light">Login</div>
+          <div className="text-xl mt-3 mb-3 p-1 text-cyan-400 font-light">Login</div>
           <div className="mb-3 rounded-xl">
             <button 
               onClick={handleGoogleSignIn} 
               className="p-3 flex justify-center items-center text-gray-200
                         rounded-2xl bg-gradient-to-b from-gray-600 to-black
-                        hover:scale-104 hover:text-gray-400 transition-transform duration-200
+                        hover:scale-104 hover:text-gray-300 transition-transform duration-200
                         shadow-[3px_3px_10px_-1px_rgba(34,211,238,0.4)]">
               <FcGoogle className="w-7 h-7 inline rounded-3xl mr-2" />
               <span className="text-lg font-extralight">Continue with Google</span>
             </button>
           </div>
-          <div className="text-gray-400/70 text-sm mt-2">
+          <div className="text-gray-400/70 text-sm mt-2 flex justify-center items-center">
+          <img src={clerkSvg} alt="" className="w-6 h-6 mr-2 rounded-2xl"/>
             Powered by clerk
           </div>
         </div>
-</div>
-
-
-
+      </div>
     </div>
   );
 }

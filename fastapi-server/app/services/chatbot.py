@@ -16,6 +16,10 @@ default_sys_prompt = \
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
 
 Please don't call the same tools with the same parameters repeatedly.
+If calling a tool gives you an error twice, STOP calling it, you will not be allowed to use it again, and inform the user about the issue.
+
+If the user asks for information you are unable to fetch or do not have, give an approximate solution (even with no concrete data) with a disclaimer and steps on how the user can get the exact information.
+If the user's query is not related to oceanography or Argo data, politely inform them that you are specialized in oceanography and Argo data and cannot assist with unrelated queries.
 """
 
 student_sys_prompt = \
@@ -25,6 +29,7 @@ Keep the tone friendly and engaging, and conversations educational.
 
 researcher_sys_prompt = \
 """No need to explain basic concepts."""
+
 
 model = OpenAIChatModel(
     getenv('MODEL_NAME', 'gpt-5-nano'),
@@ -59,6 +64,7 @@ agent = Agent(
     output_type=AgentResponse,
     instructions=default_sys_prompt,
     tools=all_tools,
+    retries=3,
     #model_settings=ModelSettings()
 )
 
@@ -85,7 +91,8 @@ if __name__ == "__main__":
     response: AgentResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="get me the max temperature from float 6902746, cycle 1, only",
+            message="get me the max temperature from float 6902746, cycle 1, only. No other information. Keep your answer short.",
+            #message="find avg salinity from indian ocean",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
         []
