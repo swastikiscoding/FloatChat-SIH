@@ -4,9 +4,11 @@ import { axiosInstance } from "../utils/axiosInstance.js";
 export const getChat = async (req, res) => {
     try{
         const { chatId } = req.params;
-        const chat = await Chat.findById(chatId);
+        const userId = req.auth.userId;
+        
+        const chat = await Chat.findOne({ _id: chatId, userId });
         if(!chat){
-            return res.status(404).json({ error: "Chat not found" });
+            return res.status(404).json({ error: "Chat not found or unauthorized" });
         }
         res.status(200).json({message: "Chat fetched successfully", chat: chat.messages, chatId});
     }catch(error){
@@ -19,18 +21,20 @@ export const postMessage = async (req, res) => {
     try{
         const { message } = req.body;
         let { chatId } = req.params;
+        const userId = req.auth.userId;
+        console.log("User ID:", userId);
         console.log("Received message:", message, "for chatId:", chatId);
         if(chatId === 'new'){
             // Create title from first message (truncate if too long)
             const chatTitle = message.length > 50 ? message.slice(0, 50) + "..." : message;
-            const chat = new Chat({ messages: [] , title: chatTitle});
+            const chat = new Chat({ messages: [] , title: chatTitle, userId });
             await chat.save();
             chatId = chat._id;
         }
         console.log("Using chatId:", chatId);
-        const chat = await Chat.findById(String(chatId));
+        const chat = await Chat.findOne({ _id: String(chatId), userId });
         if(!chat){
-            return res.status(404).json({ error: "Chat not found" });
+            return res.status(404).json({ error: "Chat not found or unauthorized" });
         }
         const context = chat.messages.length > 5 ? chat.messages.slice(-5) : chat.messages;
         const contextMessage = context.map(msg => `User Message: ${msg.userMessage}\nAI Message: ${msg.AIMessage}`).join("\n");
@@ -56,8 +60,11 @@ export const postMessage = async (req, res) => {
 
 export const fetchAllChats = async (req, res) => {
     try{
-        const chats = await Chat.find({}).sort({ updatedAt: -1 });
-        
+        const userId = req.auth.userId;
+        const chats = await Chat.find({ userId }).sort({ updatedAt: -1 });
+        if(!chats){
+            return res.status(404).json({ error: "No chats found" });
+        }
         // Transform chats to include title with fallback
         const transformedChats = chats.map(chat => ({
             _id: chat._id,
