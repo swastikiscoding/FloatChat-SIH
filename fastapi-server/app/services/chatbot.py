@@ -18,6 +18,9 @@ When outputting any data or answering any queries, ensure that you always cite t
 Please don't call the same tools with the same parameters repeatedly.
 If calling a tool gives you an error twice, STOP calling it, you will not be allowed to use it again, and inform the user about the issue.
 
+The `erddap` source allows faster and comprehensive data fetching, but may sometimes be down. Use this source first.
+The `argovis` source has very high quality data, but is slower and may not have all the data.
+
 If the user asks for information you are unable to fetch or do not have, give an approximate solution (even with no concrete data) with a disclaimer and steps on how the user can get the exact information.
 If the user's query is not related to oceanography or Argo data, politely inform them that you are specialized in oceanography and Argo data and cannot assist with unrelated queries.
 """
@@ -28,7 +31,7 @@ Keep the tone friendly and engaging, and conversations educational.
 """
 
 researcher_sys_prompt = \
-"""No need to explain basic concepts."""
+"""No need to explain basic concepts. Feel free to use technical jargon."""
 
 
 model = OpenAIChatModel(
@@ -91,7 +94,7 @@ if __name__ == "__main__":
     response: AgentResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="get me the max temperature from float 6902746, cycle 1, only. No other information. Keep your answer short.",
+            message="Show me salinity profiles near the equator in March 2023",
             #message="find avg salinity from indian ocean",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),
