@@ -80,7 +80,7 @@ const ChatSection: React.FC = () => {
           </>
         ) : (
           // Result Section
-          <div className="mt-6 space-y-3 overflow-y-auto max-h-[70vh]">
+          <div className="mt-6 space-y-3  max-h-[70vh]">
             {/* Display all chat messages if available */}
             {messages.length > 0 ? (
               messages.map((message, index) => (
