@@ -16,11 +16,14 @@ import io
 import base64
 
 
-alternate_sources = ['argovis']  # 'erddap' is the default source
+sources = [
+    'erddap',
+    'argovis'
+]
 
 website_down_msg = f"""The `erddap` website, the site from where you get your data, may be down.
 Ask the user to check at `https://erddap.ifremer.fr/erddap` themselves.
-Don't use this source again. Use {[f"`{src}`" for src in alternate_sources]} instead."""
+Retry using {[f"`{src}`" for src in sources if src != 'erddap']} as a source instead, if you haven't already!"""
 
 virtual_table_name = 'db'  # used in duckdb SQL queries
 
@@ -52,7 +55,9 @@ def load_argo_profile(
         fetcher = ArgopyDataFetcher(
             mode='standard',
             src=source, # 'erddap' or 'argovis'
-            ds=dataset # 'phy' or 'bcg'
+            ds=dataset, # 'phy' or 'bcg'
+            #parallel=True,
+            progress=True,
         )
         data = fetcher.profile(float_id, cyc).to_xarray()
     except FileNotFoundError as e:
@@ -62,7 +67,7 @@ def load_argo_profile(
         logger.error(f"Error loading Argo profile data: {e}")
         raise ModelRetry(f"Error loading Argo profile data: {e}")
     
-    desc = f"Argo profile {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}"
+    desc = f"Argo float ID {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}, dataset {dataset}"
     df: pd.DataFrame = data.to_dataframe().reset_index()
     ref: str = ctx.deps.store(df)
     output = [
@@ -71,7 +76,7 @@ def load_argo_profile(
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
     ]
-    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    logger.info(f"Loaded Argo data with rows={len(df)}.")
     return '\n'.join(output)
 
 
@@ -97,7 +102,9 @@ def load_argo_float(
         fetcher = ArgopyDataFetcher(
             mode='standard',
             src=source, # 'erddap' or 'argovis'
-            ds=dataset # 'phy' or 'bcg'
+            ds=dataset, # 'phy' or 'bcg'
+            #parallel=True,
+            progress=True,
         )
         data = fetcher.float(float_id).to_xarray()
     except FileNotFoundError as e:
@@ -107,7 +114,7 @@ def load_argo_float(
         logger.error(f"Error loading Argo float data: {e}")
         raise ModelRetry(f"Error loading Argo float data: {e}")
     
-    desc = f"Argo float {float_id}"
+    desc = f"Argo float {float_id}, dataset {dataset}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
@@ -116,7 +123,7 @@ def load_argo_float(
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
     ]
-    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    logger.info(f"Loaded Argo data with rows={len(df)}.")
     return '\n'.join(output)
 
 
@@ -154,7 +161,9 @@ def load_argo_region(
         fetcher = ArgopyDataFetcher(
             mode='standard',
             src=source, # 'erddap' or 'argovis'
-            ds=dataset # 'phy' or 'bcg'
+            ds=dataset, # 'phy' or 'bcg'
+            #parallel=True,
+            progress=True
         )
         data = fetcher.region(box).to_xarray()
     except FileNotFoundError as e:
@@ -163,8 +172,8 @@ def load_argo_region(
     except Exception as e:
         logger.error(f"Error loading Argo region data: {e}")
         raise ModelRetry(f"Error loading Argo region data: {e}")
-    
-    desc = f"Argo region {box}"
+
+    desc = f"Argo region {box}, dataset {dataset}"
     df = data.to_dataframe().reset_index()
     ref = ctx.deps.store(df)
     output = [
@@ -173,7 +182,7 @@ def load_argo_region(
         f'Columns: {list(df.columns)}',
         f'Rows: {len(df)}'
     ]
-    logger.info(f"Loaded Argo data: {desc}, rows={len(df)}")
+    logger.info(f"Loaded Argo data with rows={len(df)}.")
     return '\n'.join(output)
 
 
