@@ -22,6 +22,8 @@ interface ContextType {
   currentChatId: string | null;
   messages: Message[];
   loadChat: (chatId: string) => Promise<void>;
+  mode: string;
+  setMode: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface ProviderProps {
@@ -41,6 +43,7 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
   const [showResult, setshowResult] = useState(false);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [mode, setMode] = useState<string>("Student");
 
   const newChat = () => {
     setloading(false);
@@ -94,9 +97,14 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
       // Use existing chatId or create new chat
       const chatId = currentChatId || 'new';
       
+      // Convert mode to number for backend
+      const modeNumber = mode === "Student" ? 0 : mode === "Research" ? 1 : 2;
+      console.log("Sending message with mode:", mode, "->", modeNumber);
+      
       const token = await getToken();
       const response = await axiosInstance.post(`/chat/${chatId}`, {
         message: currentPrompt,
+        mode: modeNumber,
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -145,6 +153,8 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     currentChatId,
     messages,
     loadChat,
+    mode,
+    setMode,
   };
 
   return (

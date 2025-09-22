@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { ChevronDown, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Context } from "../context/Context";
 
 const options: string[] = ["Student", "Research", "Combined"];
 
 const ModeSelect = () => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("");
+  const { mode, setMode } = useContext(Context);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,10 +35,10 @@ const ModeSelect = () => {
             <Star size={18} className="text-cyan-400" />
             <span
               className={`mr-auto group-data-[collapsible=icon]:hidden ml-1 ${
-                selected ? "text-gray-200 text-sm" : "text-gray-400"
+                mode ? "text-gray-200 text-sm" : "text-gray-400"
               }`}
             >
-              {selected || "Student"}
+              {mode || "Student"}
             </span>
           </div>
 
@@ -67,7 +68,8 @@ const ModeSelect = () => {
                 <button
                   key={option}
                   onClick={() => {
-                    setSelected(option)
+                    console.log("Mode changed to:", option);
+                    setMode(option)
                     setOpen(false)
                   }}
                   className="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md"

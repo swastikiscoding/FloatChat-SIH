@@ -19,11 +19,11 @@ export const getChat = async (req, res) => {
 
 export const postMessage = async (req, res) => {
     try{
-        const { message } = req.body;
+        const { message, mode } = req.body;
         let { chatId } = req.params;
         const userId = req.auth.userId;
         console.log("User ID:", userId);
-        console.log("Received message:", message, "for chatId:", chatId);
+        console.log("Received message:", message, "for chatId:", chatId, "with mode:", mode);
         if(chatId === 'new'){
             // Create title from first message (truncate if too long)
             const chatTitle = message.length > 50 ? message.slice(0, 50) + "..." : message;
@@ -43,7 +43,7 @@ export const postMessage = async (req, res) => {
             request: {
                 message: `Context: ${contextMessage}\n Query: ${message}`,
                 deps: {
-                    mode: 0
+                    mode: mode || 0
                 }
             }
         });
