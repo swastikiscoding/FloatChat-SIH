@@ -39,9 +39,9 @@ def load_argo_profile(
     Args:
         float_id: the WMO identifier of the float
         cyc: the cycle number or list of cycle numbers
-        dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
+        dataset: the type of data to load, either 'phy' (physical) or 'bgc' (biogeochemical)
         source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
-            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there. For BCG data, use 'erddap'.
+            ⚠️ You cannot get BGC data from 'argovis', only 'phy' data is available there. For BGC data, use 'erddap'.
     
     For instance, to retrieve temperature (physical property) data for the 12th profile of float WMO 6902755:
     float_id=6902755, cyc=12
@@ -55,7 +55,7 @@ def load_argo_profile(
         fetcher = ArgopyDataFetcher(
             mode='standard',
             src=source, # 'erddap' or 'argovis'
-            ds=dataset, # 'phy' or 'bcg'
+            ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
         )
@@ -89,10 +89,10 @@ def load_argo_float(
     """Load Argo data for a specific float.
     Args:
         float_id: the WMO identifier(s) of the float. Use a list to load multiple floats.
-        dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
+        dataset: the type of data to load, either 'phy' (physical) or 'bgc' (biogeochemical)
         source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
-            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there. For BCG data, use 'erddap'.
-    
+            ⚠️ You cannot get BGC data from 'argovis', only 'phy' data is available there. For BGC data, use 'erddap'.
+
     Eg. float_id=[6902746, 6902755] (for multiple floats)
     Eg. float_id=6902746 (for a single float)
     """
@@ -102,7 +102,7 @@ def load_argo_float(
         fetcher = ArgopyDataFetcher(
             mode='standard',
             src=source, # 'erddap' or 'argovis'
-            ds=dataset, # 'phy' or 'bcg'
+            ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
         )
@@ -142,9 +142,9 @@ def load_argo_region(
         lat: list of two floats [lat_min, lat_max]
         dpt: list of two floats [dpt_min, dpt_max]
         date: optional list of two strings [date_min, date_max] in 'YYYY-MM-DD' format
-        dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
+        dataset: the type of data to load, either 'phy' (physical) or 'bgc' (biogeochemical)
         source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
-            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there. For BCG data, use 'erddap'.
+            ⚠️ You cannot get BGC data from 'argovis', only 'phy' data is available there. For BGC data, use 'erddap'.
     
     If `date` is not specified, the entire time series is fetched.
 
@@ -161,7 +161,7 @@ def load_argo_region(
         fetcher = ArgopyDataFetcher(
             mode='standard',
             src=source, # 'erddap' or 'argovis'
-            ds=dataset, # 'phy' or 'bcg'
+            ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True
         )
