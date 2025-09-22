@@ -21,6 +21,14 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
       navigate("/google-signin"); 
     }
   }
+
+  const handleDashboardClick=()=>{
+    if (isSignedIn) {
+      navigate("/dashboard");  
+    } else {
+      navigate("/google-signin"); 
+    }
+  }
   return (
 
       <div className="relative min-w-full h-[70vh] sm:h-[99vh] ">
@@ -105,13 +113,23 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
           animate={{ scale: 1 }}
           transition={{ duration: 0.7, delay: 1 }}
         >
-          <motion.button 
-            whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
-            className="bg-cyan-600 font-semibold pl-6 pr-6 pt-2 pb-2 text-2xl rounded-2xl text-center cursor-pointer"
-            onClick={handleclick}
-          >
-            Start Chatting
-          </motion.button>
+          <div className="flex gap-4 justify-center items-center flex-wrap">
+            <motion.button 
+              whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
+              className="bg-cyan-600 font-semibold px-6 py-2 text-xl sm:text-2xl rounded-2xl text-center cursor-pointer"
+              onClick={handleclick}
+            >
+              Start Chatting
+            </motion.button>
+            
+            <motion.button 
+              whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
+              className="bg-cyan-600 font-semibold px-6 py-2 text-xl sm:text-2xl rounded-2xl text-center cursor-pointer"
+              onClick={handleDashboardClick}
+            >
+              Dashboard
+            </motion.button>
+          </div>
         </motion.div>
 
           </div>
