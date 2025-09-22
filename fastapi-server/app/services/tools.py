@@ -41,7 +41,7 @@ def load_argo_profile(
         cyc: the cycle number or list of cycle numbers
         dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
         source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
-            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there.
+            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there. For BCG data, use 'erddap'.
     
     For instance, to retrieve temperature (physical property) data for the 12th profile of float WMO 6902755:
     float_id=6902755, cyc=12
@@ -91,7 +91,7 @@ def load_argo_float(
         float_id: the WMO identifier(s) of the float. Use a list to load multiple floats.
         dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
         source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
-            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there.
+            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there. For BCG data, use 'erddap'.
     
     Eg. float_id=[6902746, 6902755] (for multiple floats)
     Eg. float_id=6902746 (for a single float)
@@ -144,7 +144,7 @@ def load_argo_region(
         date: optional list of two strings [date_min, date_max] in 'YYYY-MM-DD' format
         dataset: the type of data to load, either 'phy' (physical) or 'bcg' (biogeochemical)
         source: the data source, either 'erddap' or 'argovis' (default is 'erddap')
-            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there.
+            ⚠️ You cannot get BCG data from 'argovis', only 'phy' data is available there. For BCG data, use 'erddap'.
     
     If `date` is not specified, the entire time series is fetched.
 
