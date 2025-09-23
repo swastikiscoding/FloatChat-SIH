@@ -32,10 +32,10 @@ const ModeSelect = () => {
         >
           {/* Left side: icon + label */}
           <div className="flex items-center justify-center gap-2 w-17/20">
-            <Star size={18} className="text-cyan-400" />
+            <Star size={16} className="text-cyan-400 md:w-[18px] md:h-[18px]" />
             <span
-              className={`mr-auto group-data-[collapsible=icon]:hidden ml-1 ${
-                mode ? "text-gray-200 text-sm" : "text-gray-400"
+              className={`mr-auto group-data-[collapsible=icon]:hidden ml-1 text-xs md:text-sm ${
+                mode ? "text-gray-200" : "text-gray-400"
               }`}
             >
               {mode || "Student"}
@@ -48,7 +48,7 @@ const ModeSelect = () => {
             transition={{ duration: 0.2 }}
             className="group-data-[collapsible=icon]:hidden"
           >
-            <ChevronDown size={18} className="text-cyan-400" />
+            <ChevronDown size={16} className="text-cyan-400 md:w-[18px] md:h-[18px]" />
           </motion.div>
         </button>
 
@@ -62,7 +62,7 @@ const ModeSelect = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.2 }}
-              className="absolute left-1/2 mt-1 w-25 bg-gray-900 border border-cyan-400/20 rounded-lg shadow-lg z-[1000]"
+              className="absolute left-1/2 mt-1 w-24 md:w-25 bg-gray-900 border border-cyan-400/20 rounded-lg shadow-lg z-[1000]"
             >
               {options.map((option) => (
                 <button
@@ -72,7 +72,7 @@ const ModeSelect = () => {
                     setMode(option)
                     setOpen(false)
                   }}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md"
+                  className="w-full text-left px-2 md:px-3 py-2 text-xs md:text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md"
                 >
                   {option}
                 </button>

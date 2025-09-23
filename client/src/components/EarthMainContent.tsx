@@ -23,6 +23,8 @@ interface EarthMainContentProps {
   selectedPoint: Point | null;
   onPointClick: (point: Point) => void;
   onClosePoint: () => void;
+  selectedDate: string;
+  onDateChange?: (date: string) => void;
 }
 
 export default function EarthMainContent({ 
@@ -31,15 +33,17 @@ export default function EarthMainContent({
   isLoading, 
   selectedPoint,
   onPointClick,
-  onClosePoint
+  onClosePoint,
+  selectedDate,
+  onDateChange
 }: EarthMainContentProps) {
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <main className="w-full h-[calc(100vh-1.5rem)] bg-gray-950 border border-white/30 rounded-2xl my-3 mr-4 flex flex-col relative">
+      <main className="w-full h-[calc(100vh-1.5rem)] md:h-[calc(100vh-1.5rem)] bg-gray-950 border border-white/30 rounded-2xl my-3 mx-2 md:mr-4 md:ml-0 flex flex-col relative">
         {/* Header with Sidebar Trigger */}
-        <div className="flex items-center p-4 border-b border-white/10">
-          <SidebarTrigger />
-          <h1 className="text-white text-xl font-semibold ml-3">Argo Float Data Explorer</h1>
+        <div className="flex items-center p-3 md:p-4 border-b border-white/10">
+          <SidebarTrigger className="hidden md:block" />
+          <h1 className="text-white text-lg md:text-xl font-semibold md:ml-3">Argo Float Data Explorer</h1>
         </div>
         
         <div className="flex-1 relative overflow-hidden min-w-0 rounded-b-2xl">
@@ -72,6 +76,10 @@ export default function EarthMainContent({
       <MobilePointPanel 
         selectedPoint={selectedPoint}
         onClosePoint={onClosePoint}
+        selectedDate={selectedDate}
+        points={points}
+        isLoading={isLoading}
+        onDateChange={onDateChange}
       />
     </div>
   )

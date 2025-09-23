@@ -4,23 +4,38 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import ModeSelect from "./ModeSelect"
-import {  Shell } from "lucide-react"
+import { Shell, X } from "lucide-react"
 import ChatHistory from "./ChatHistory"
 import { UserButton } from "@clerk/clerk-react"
 
 export function AppSidebar() {
+  const { isMobile, setOpenMobile } = useSidebar()
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="bg-gray-950">
-        {/* Logo button */}
-        <button className="flex items-center pl-0 pt-2 ml-1 mt-1">
-          <Shell className="w-6 h-6 text-cyan-400 hover:scale-115" />
-          <span className="text-2xl pl-3 group-data-[collapsible=icon]:hidden"> {/*hides*/}
-            FloatChat
-          </span>
-        </button>
+        {/* Mobile Close Button and Logo */}
+        <div className="flex items-center justify-between pl-0 pt-2 ml-1 mt-1">
+          <button className="flex items-center">
+            <Shell className="w-6 h-6 text-cyan-400 hover:scale-115" />
+            <span className="text-2xl pl-3 group-data-[collapsible=icon]:hidden">
+              FloatChat
+            </span>
+          </button>
+          
+          {/* Close button - only visible on mobile */}
+          {isMobile && (
+            <button 
+              onClick={() => setOpenMobile(false)}
+              className="p-2 hover:bg-gray-800 rounded-lg transition-colors mr-2 md:hidden"
+            >
+              <X className="w-5 h-5 text-gray-400 hover:text-white" />
+            </button>
+          )}
+        </div>
 
         {/* New Chat button */}
 

@@ -72,26 +72,26 @@ const ChatHistory = () => {
    };
   
   return (
-    <div className="pl-3 pr-1 text-white">
+    <div className="pl-2 md:pl-3 pr-1 text-white">
       {/* New Chat Button */}
-      <div className="mb-4">
+      <div className="mb-3 md:mb-4">
         <button
           onClick={handleNewChat}
-          className="w-full text-left rounded-md pl-3 py-2 text-sm font-medium text-cyan-400 hover:bg-gray-800 transition border border-cyan-400/30"
+          className="w-full text-left rounded-md pl-2 md:pl-3 py-2 text-xs md:text-sm font-medium text-cyan-400 hover:bg-gray-800 transition border border-cyan-400/30"
         >
           + New Chat
         </button>
       </div>
 
       {/* Chat History */}
-      <div className="text-gray-400 text-xs uppercase tracking-wide mb-2 pl-3">
+      <div className="text-gray-400 text-xs uppercase tracking-wide mb-2 pl-2 md:pl-3">
         Recent Chats
       </div>
       {loading && chatHistory.length === 0 ? (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="h-8 bg-gray-700 rounded-md mr-[15px] ml-3"></div>
+              <div className="h-6 md:h-8 bg-gray-700 rounded-md mr-[10px] md:mr-[15px] ml-2 md:ml-3"></div>
             </div>
           ))}
         </div>
@@ -101,7 +101,7 @@ const ChatHistory = () => {
             <li
               key={chat._id}
               onClick={() => handleChatClick(chat._id)}
-              className={`cursor-pointer rounded-md pl-3 py-1 mr-[15px] text-sm font-light text-gray-300 hover:bg-gray-800 transition ${
+              className={`cursor-pointer rounded-md pl-2 md:pl-3 py-1 mr-[10px] md:mr-[15px] text-xs md:text-sm font-light text-gray-300 hover:bg-gray-800 transition ${
                 currentChatId === chat._id ? 'bg-gray-800 border-l-2 border-cyan-400' : ''
               } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
@@ -109,7 +109,7 @@ const ChatHistory = () => {
             </li>
           )) : (
             !loading && (
-              <div className="text-gray-500 text-sm pl-3">
+              <div className="text-gray-500 text-xs md:text-sm pl-2 md:pl-3">
                 No chats yet. Start a conversation!
               </div>
             )

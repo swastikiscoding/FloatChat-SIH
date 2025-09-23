@@ -26,14 +26,14 @@ function Input({ className, onSubmit, ...props }: InputProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className={cn(
-          "w-full min-h-20 max-h-22 px-5 pr-14 py-3 resize-none rounded-2xl outline-none",
+          "w-full min-h-12 md:min-h-20 max-h-20 md:max-h-22 px-3 md:px-5 pr-12 md:pr-14 py-2 md:py-3 resize-none rounded-2xl outline-none",
           "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
           "border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.6)]",
-          "text-gray-200 placeholder:text-gray-500 text-base",
+          "text-gray-200 placeholder:text-gray-500 text-sm md:text-base",
           "overflow-auto",
           "shadow-[1px_1px_10px_rgba(0,200,255,0.3)]",
-          'text-sm font-light text-gray-300',
-          'placeholder:text-[15px]',
+          'font-light text-gray-300',
+          'placeholder:text-sm md:placeholder:text-[15px]',
           className
         )}
         onInput={e => {
@@ -64,14 +64,14 @@ function Input({ className, onSubmit, ...props }: InputProps) {
         onClick={handleSubmit}
         disabled={!value.trim()}
         className={cn(
-          "absolute bottom-4 right-3 flex items-center justify-center h-7 w-7 rounded-full border border-white/20 transition",
+          "absolute bottom-2 md:bottom-4 right-2 md:right-3 flex items-center justify-center h-6 w-6 md:h-7 md:w-7 rounded-full border border-white/20 transition",
           value.trim() 
             ? "bg-cyan-400 hover:bg-cyan-600" 
             : "bg-gray-600 cursor-not-allowed"
         )}
       >
         <ArrowUp 
-        className="h-5 w-4 text-gray-900 transition-transform duration-200 hover:scale-120" 
+        className="h-4 w-3 md:h-5 md:w-4 text-gray-900 transition-transform duration-200 hover:scale-120" 
         strokeWidth={2.5}
         />
       </button>

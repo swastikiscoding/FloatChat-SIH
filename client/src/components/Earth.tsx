@@ -38,9 +38,11 @@ interface EarthProps {
 
 export default function Earth({ selectedDate, onDateChange }: EarthProps) {
   return (
-    <SidebarProvider>
-      <EarthContent selectedDate={selectedDate} onDateChange={onDateChange} />
-    </SidebarProvider>
+    <div className="flex h-screen w-full bg-gray-900 overflow-hidden">
+      <SidebarProvider>
+        <EarthContent selectedDate={selectedDate} onDateChange={onDateChange} />
+      </SidebarProvider>
+    </div>
   );
 }
 
@@ -124,6 +126,8 @@ function EarthContent({ selectedDate, onDateChange }: EarthProps) {
         selectedPoint={selectedPoint}
         onPointClick={handlePointClick}
         onClosePoint={handleClosePoint}
+        selectedDate={selectedDate}
+        onDateChange={onDateChange}
       />
     </>
   );

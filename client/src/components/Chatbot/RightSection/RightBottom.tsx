@@ -12,7 +12,7 @@ const RightBottom = () => {
   };
 
   return (
-    <div className='h-5/28 rounded-b-2xl px-15 pt-5'>
+    <div className='h-5/28 rounded-b-2xl px-4 md:px-15 pt-3 md:pt-5'>
       <Input onSubmit={handleSubmit} disabled={loading} />
     </div>
   )
