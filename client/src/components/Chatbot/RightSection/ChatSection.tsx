@@ -69,7 +69,7 @@ const ChatSection: React.FC = () => {
             </div>
 
             {/* Suggestion Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-7 mt-13 md:mt-13">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-7 mt-13 md:mt-15">
               {[
                 "Sea temperature and salinity trends in the Philippine Sea (126°-130°E, 10°-15°N) over the past month.",
                 "What is the surface temperature and salinity at -64.870163 longitude, 42.330696 latitude?",
@@ -79,7 +79,7 @@ const ChatSection: React.FC = () => {
                 <div
                   key={idx}
                   onClick={() => handleCardClick(text)}
-                  className="bg-[#0f111a] cursor-pointer rounded-xl p-3 md:pt-4 md:px-3 text-gray-300 shadow-[0_0_10px_rgba(0,255,255,0.2)] border border-cyan-400/20 hover:shadow-[0_0_12px_rgba(0,255,255,0.4)] transition-shadow duration-300 text-sm md:text-base text-center"
+                  className="bg-[#0f111a] cursor-pointer rounded-xl p-3 md:pt-4 md:px-3 text-gray-300 shadow-[0_0_5px_rgba(0,255,255,0.2)] border border-cyan-400/20 hover:shadow-[0_0_6px_rgba(0,255,255,0.4)] transition-shadow duration-300 text-sm md:text-base text-center"
                 >
                   {text}
                 </div>
@@ -112,6 +112,7 @@ const ChatSection: React.FC = () => {
                 <BotReply Text="" loading={true} />
               </>
             )}
+
           </div>
         )}
       </div>
