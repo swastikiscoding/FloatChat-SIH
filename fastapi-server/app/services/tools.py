@@ -59,7 +59,7 @@ def load_argo_profile(
             progress=True,
             cache=True, cachedir=CACHE_DIR
         )
-        data = fetcher.profile(float_id, cyc).to_xarray()
+        df = fetcher.profile(float_id, cyc).to_dataframe().reset_index()
     except FileNotFoundError as e:
         logger.error(f"Error: {e}\nWebsite may be down.")
         raise ModelRetry(f"Error: {e}\n{website_down_msg}")
@@ -68,7 +68,6 @@ def load_argo_profile(
         raise ModelRetry(f"Error loading Argo profile data: {e}")
     
     desc = f"Argo float ID {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}, dataset {dataset}"
-    df: pd.DataFrame = data.to_dataframe().reset_index()
     ref: str = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
@@ -107,7 +106,7 @@ def load_argo_float(
             progress=True,
             cache=True, cachedir=CACHE_DIR
         )
-        data = fetcher.float(float_id).to_xarray()
+        df = fetcher.float(float_id).to_dataframe().reset_index()
     except FileNotFoundError as e:
         logger.error(f"Error: {e}\nWebsite may be down.")
         raise ModelRetry(f"Error: {e}\n{website_down_msg}")
@@ -116,7 +115,6 @@ def load_argo_float(
         raise ModelRetry(f"Error loading Argo float data: {e}")
     
     desc = f"Argo float {float_id}, dataset {dataset}"
-    df = data.to_dataframe().reset_index()
     ref = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
@@ -167,7 +165,7 @@ def load_argo_region(
             progress=True,
             cache=True, cachedir=CACHE_DIR
         )
-        data = fetcher.region(box).to_xarray()
+        df = fetcher.region(box).to_dataframe().reset_index()
     except FileNotFoundError as e:
         logger.error(f"Error: {e}\nWebsite may be down.")
         raise ModelRetry(f"Error: {e}\n{website_down_msg}")
@@ -176,7 +174,6 @@ def load_argo_region(
         raise ModelRetry(f"Error loading Argo region data: {e}")
 
     desc = f"Argo region {box}, dataset {dataset}"
-    df = data.to_dataframe().reset_index()
     ref = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
@@ -202,8 +199,7 @@ def run_duckdb(
     You can use standard SQL syntax to query the data.
     Example SQL query:
         SELECT AVG(TEMP) FROM {virtual_table_name} WHERE PRES >= 490.0;
-    Make sure that the table name `{virtual_table_name}` is used in your SQL query.
-    Using `{dataframe_ref}` as table name will result in an error! `SELECT * FROM {dataframe_ref}` is INVALID SQL and won't work!
+    Make sure that the table name `{virtual_table_name}` is used in your SQL query, not `{dataframe_ref}`!
 
     Note: The result of the query is stored as a new DataFrame reference, not given directly to you.
     """
