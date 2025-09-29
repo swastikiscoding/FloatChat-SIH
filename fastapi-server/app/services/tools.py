@@ -52,7 +52,7 @@ def load_argo_profile(
 
     try:
         fetcher = ArgopyDataFetcher(
-            mode='standard',
+            mode='standard' if dataset == 'phy' else 'expert',
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
@@ -100,7 +100,7 @@ def load_argo_float(
 
     try:
         fetcher = ArgopyDataFetcher(
-            mode='standard',
+            mode='standard' if dataset == 'phy' else 'expert',
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
@@ -160,7 +160,7 @@ def load_argo_region(
     logger.info(f"Loading Argo region data: box={box}, dataset={dataset}, source={source}")
     try:
         fetcher = ArgopyDataFetcher(
-            mode='standard',
+            'standard' if dataset == 'phy' else 'expert',
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
@@ -305,7 +305,7 @@ all_tools = [
     Tool(load_argo_region, sequential=True),
     Tool(run_duckdb, sequential=True),
     Tool(get_some_rows, sequential=True),
-    #Tool(plot_saved_data, sequential=True), # don't trust the AI to use this just yet
+    Tool(plot_saved_data, sequential=True),
 ]
 
 
