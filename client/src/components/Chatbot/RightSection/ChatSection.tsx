@@ -62,7 +62,7 @@ const ChatSection: React.FC = () => {
           <>
             {/* Greeting */}
             <div className="text-center mt-4 md:mt-10">
-              <h2 className="text-2xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-100 via-cyan-700 to-blue-900 bg-clip-text text-transparent transition-all duration-300">
+              <h2 className="text-2xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-100 via-cyan-700 to-blue-900 bg-clip-text text-transparent transition-all duration-300 py-4">
                 {getGreeting()}
               </h2>
               <p className="text-gray-400 mt-2 md:mt-4 text-sm md:text-lg">
