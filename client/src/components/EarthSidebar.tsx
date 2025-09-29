@@ -65,7 +65,7 @@ export function EarthSidebar({
        
         {/* Date Selection */}
         {onDateChange && (
-          <div className="flex flex-col px-2 p-2 mt-3 md:mt-4 mb-2 rounded-lg text-gray-200 text-xs md:text-sm group-data-[collapsible=icon]:hidden">
+          <div className="flex flex-col px-2 p-2 mt-3 md:mt-4 mb-2 rounded-lg text-gray-200 text-xs md:text-sm group-data-[collapsible=icon]:hidden ">
             <span className="text-xs md:text-sm ml-1 mb-2 text-cyan-400">
               Date Selection
             </span>
@@ -73,10 +73,10 @@ export function EarthSidebar({
               type="date"
               value={selectedDate}
               onChange={(e) => onDateChange(e.target.value)}
-              className="w-full bg-gray-800/50 text-white border border-white/20 rounded-lg px-2 md:px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-200 hover:border-white/40 hover:bg-gray-800/70"
+              className="w-full bg-gradient-to-r from-gray-950 via-gray-900 to-cyan-950/50 text-white border border-white/20 rounded-lg px-2 md:px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all duration-200 hover:border-white/40 hover:bg-gray-800/70 "
               min="2020-01-01"
               max="2025-12-31"
-            />
+            /> 
           </div>
         )}
 

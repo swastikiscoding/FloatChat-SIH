@@ -19,7 +19,7 @@ function Input({ className, onSubmit, ...props }: InputProps) {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-[81%] mx-auto">
       <textarea
         rows={1}
         placeholder="Ask about sea temperature, salinity, or trends..."
