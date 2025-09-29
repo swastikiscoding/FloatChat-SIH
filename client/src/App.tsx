@@ -14,7 +14,6 @@ function App() {
   const aboutRef = useRef<HTMLDivElement | null>(null);
   const modeRef=useRef<HTMLDivElement | null>(null);
   const navRef=useRef<HTMLDivElement | null>(null);
-
   const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   };
