@@ -59,7 +59,7 @@ export function AppSidebar() {
 
       <SidebarFooter className="bg-gray-950">
         {/* Clerk UserButton with responsive design */}
-        <div className="flex items-center justify-center p-2 mx-2 mb-2 rounded-lg group-data-[collapsible=icon]:mx-1">
+        <div className="flex items-center justify-center p-2 mx-2 mb-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors group-data-[collapsible=icon]:mx-1">
           <UserButton 
             appearance={{
               elements: {
