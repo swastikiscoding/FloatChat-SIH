@@ -1,8 +1,34 @@
 import { Shell } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useState, useEffect } from "react";
 
 const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
+  const [speaking, setSpeaking] = useState(false);
+
+  const handleSpeak = () => {
+   if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(Text);
+      utterance.lang = "en-US";
+      utterance.rate = 1;
+      utterance.pitch = 1;
+
+      utterance.onstart = () => setSpeaking(true);
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+  const isError = Text?.toLowerCase().includes("something went wrong");
   return (
     <div className='flex items-start justify-start gap-1 md:gap-2'>
       <Shell className='text-cyan-400 mt-2.5 flex-shrink-0 w-4 h-4 md:w-5 md:h-5'/>
@@ -19,6 +45,10 @@ const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
           </div>
         ) : (
           <div className="prose prose-sm md:prose prose-invert max-w-none break-words [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+            
+            {isError && (
+              <button onClick={handleSpeak} className="p-2 px-3 bg-[#007595] hover:bg-cyan-800 rounded-2xl mb-2 cursor-pointer" >{speaking ? "⏹ Stop" : "🔊 Speak"}</button>
+            )}
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -56,6 +86,7 @@ const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
                 ),
               }}
             >
+              
               {Text}
             </ReactMarkdown>
           </div>
