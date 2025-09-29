@@ -37,9 +37,9 @@ class Plot_Data(BaseModel):
 
 @dataclass
 class AgentDependencies:
-    mode: UserMode = field(default_factory=lambda: UserMode.HYBRID)
+    mode: UserMode = field(default_factory=lambda: UserMode.HYBRID, metadata={"description": "User mode: can be HYBRID, STUDENT, or RESEARCHER."})
     output: dict[str, pd.DataFrame] = field(default_factory=dict)
-    plots_data: list[Plot_Data] = field(default_factory=list)
+    plots_data: list[Plot_Data] = field(default_factory=list, metadata={"description": "List of plot data to be rendered on the frontend. NOT to be edited or used or read by the LLM."})
 
     def store_dataframe(self, value: pd.DataFrame) -> str:
         """Store the output in deps and return the reference such as Out[1] to be used by the LLM."""

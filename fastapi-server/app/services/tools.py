@@ -269,7 +269,7 @@ def plot_saved_data(
         x_label: Label for the X-axis; will be displayed on the plot.
         y_label: Label for the Y-axis; will be displayed on the plot.
     Returns:
-        Nothing.
+        Nothing. The URL, the contents, nothing about the plot is returned to the LLM. It will all be kept away from you and shown directly to the user.
     """
     logger.info(f"Plotting data from dataframe={dataframe_ref}, x={column_for_x}, y={column_for_y}, kind={kind}, title={plot_title}, x_label={x_label}, y_label={y_label}.")
 
