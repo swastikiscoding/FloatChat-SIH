@@ -264,8 +264,8 @@ def plot_saved_data(
         plot_title: Title of the plot.
         kind: Type of the plot: 'line', 'bar', or 'scatter'.
         dataframe_ref: Reference string to the DataFrame to plot.
-        column_for_x: Column name in the DataFrame to use for the X-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
-        column_for_y: Column name in the DataFrame to use for the Y-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
+        column_for_x: Column name in the DataFrame to use for the X-axis.
+        column_for_y: Column name in the DataFrame to use for the Y-axis.
         x_label: Label for the X-axis; will be displayed on the plot.
         y_label: Label for the Y-axis; will be displayed on the plot.
     Returns:
@@ -278,6 +278,11 @@ def plot_saved_data(
     except Exception as e:
         logger.error(f"Error retrieving dataframe: {e}")
         raise ModelRetry(f"Error retrieving dataframe: {e}")
+    
+    if column_for_x not in df.columns:
+        raise ModelRetry(f"Error: Column `{column_for_x}` does not exist in the dataframe.")
+    if column_for_y not in df.columns:
+        raise ModelRetry(f"Error: Column `{column_for_y}` does not exist in the dataframe.")
 
     try:
         plot_data = Plot_Data(
