@@ -1,5 +1,6 @@
 import { Shell } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
   return (
@@ -17,8 +18,44 @@ const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
             </div>
           </div>
         ) : (
-          <div className="prose prose-sm md:prose prose-invert max-w-none [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2 break-words">
-            <ReactMarkdown>
+          <div className="prose prose-sm md:prose prose-invert max-w-none break-words [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                table: ({ children }) => (
+                  <div className="overflow-x-auto my-4 -mx-2 px-2">
+                    <table className="w-full min-w-full border-collapse border border-gray-600 rounded-lg overflow-hidden text-xs md:text-sm">
+                      {children}
+                    </table>
+                  </div>
+                ),
+                thead: ({ children }) => (
+                  <thead className="bg-gray-800/50">
+                    {children}
+                  </thead>
+                ),
+                th: ({ children }) => (
+                  <th className="border border-gray-600 px-2 md:px-3 py-1 md:py-2 text-left font-medium text-cyan-400 text-xs md:text-sm whitespace-nowrap">
+                    {children}
+                  </th>
+                ),
+                td: ({ children }) => (
+                  <td className="border border-gray-600 px-2 md:px-3 py-1 md:py-2 text-gray-300 text-xs md:text-sm">
+                    {children}
+                  </td>
+                ),
+                tbody: ({ children }) => (
+                  <tbody className="[&>tr:nth-child(even)]:bg-gray-800/25 [&>tr:hover]:bg-gray-700/30">
+                    {children}
+                  </tbody>
+                ),
+                tr: ({ children }) => (
+                  <tr className="transition-colors duration-150">
+                    {children}
+                  </tr>
+                ),
+              }}
+            >
               {Text}
             </ReactMarkdown>
           </div>

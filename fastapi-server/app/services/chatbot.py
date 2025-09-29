@@ -1,4 +1,4 @@
-from app.schemas.chat import AgentRequest, AgentResponse, AgentDependencies, UserMode
+from app.schemas.chat import AgentRequest, AgentResponse, AgentDependencies, UserMode, ChatResponse, Plot_Data
 from app.services.tools import all_tools
 from pydantic_ai import Agent, ModelSettings, RunContext
 from pydantic_ai.models.openai import OpenAIChatModel
@@ -16,6 +16,13 @@ current_date = date.today().strftime("%B %d, %Y")
 default_sys_prompt = \
 f"""You are FloatChat, an AI assistant that helps researchers in the field of oceanography.
 When outputting any data or answering any queries, ensure that you always cite the source of your information.
+Give the source as a markdown link.
+    For `erddap`, use `[https://erddap.ifremer.fr/erddap/tabledap](Ifremer ERDDAP France)`.
+    For `argovis`, use `[https://github.com/argovis/argo-database](Argovis at the University of Colorado)`.
+    For `erddap` with `bgc` dataset, use `[https://biogeochemical-argo.org/](Biogeochemical Argo Project)`.
+Make a markdown table of the data or some of the data you are using to answer the user's query wherever possible, even if the user doesn't ask for it or the answer doesn't require it.
+Give a hypothesis or explanation of the data you are using to answer the user's query if possible.
+If real data is not available, you can make a hypothetical table with reasonable values.
 
 Please don't call the same tools with the same parameters repeatedly.
 If calling a tool gives you an error twice, STOP calling it, you will not be allowed to use it again, and inform the user about the issue.
@@ -85,19 +92,27 @@ def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
         case UserMode.HYBRID:
             return ""
 
-def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
+def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[ChatResponse, list[ModelMessage]]:
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
     new_history = response.new_messages()
     logger.info(f"User message: {request.message}")
     logger.info(f"Bot response: {response.output.reply}")
-    return response.output, new_history
+
+    # Get the plots data from deps to be sent to the frontend
+    plots_data: list[Plot_Data] = request.deps.plots_data
+    if plots_data:
+        logger.info(f"Plots data exists.")
+    else:
+        logger.info("No plots data")
+        plots_data = []
+    return ChatResponse(message=response.output.reply, plots_data=plots_data), new_history
 
 if __name__ == "__main__":
     #test_credentials()
-    response: AgentResponse
+    response: ChatResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
-            message="Show me salinity profiles near the equator in March 2023",
+            message="fetch me oxygen data from the arabian sea in 2021 and plot it",
             #message="find avg salinity from indian ocean",
             deps=AgentDependencies(mode=UserMode.STUDENT)
         ),

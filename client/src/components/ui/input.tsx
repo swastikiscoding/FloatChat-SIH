@@ -29,6 +29,7 @@ function Input({ className, onSubmit, ...props }: InputProps) {
           "w-full min-h-15 md:min-h-20 max-h-20 md:max-h-22 px-3 md:px-5 pr-12 md:pr-14 py-2 md:py-3 resize-none rounded-2xl outline-none",
           // "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
           "bg-black",
+
           "border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.6)]",
           "text-gray-200 placeholder:text-gray-500 text-sm md:text-base",
           "overflow-auto",

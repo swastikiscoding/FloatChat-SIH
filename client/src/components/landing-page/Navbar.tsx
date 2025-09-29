@@ -2,42 +2,41 @@ import { Waves } from "../ui/waves-background"
 import icon from "../../assets/shell_fevicon.svg"
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
-import { SignedIn, SignedOut, UserButton,useAuth } from "@clerk/clerk-react";
+import { MessageCircle } from "lucide-react";
+import { SignedIn, SignedOut, UserButton, useAuth } from "@clerk/clerk-react";
 
 type NavbarProps = {
   onFaqClick: () => void;
   onFeaturesClick: () => void;
   onAboutClick: () => void;
 };
-const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
+const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }: NavbarProps) => {
   const navigate = useNavigate();
-  const {isSignedIn}=useAuth()
+  const { isSignedIn } = useAuth()
 
-  const handleclick=()=>{
+  const handleChatClick = () => {
     if (isSignedIn) {
-      navigate("/Chatbot");  
+      navigate("/Chatbot");
     } else {
-      navigate("/google-signin"); 
+      navigate("/google-signin");
     }
   }
 
-  const handleDashboardClick=()=>{
+  const handleDashboardClick = () => {
     if (isSignedIn) {
-      navigate("/dashboard");  
+      navigate("/dashboard");
     } else {
-      navigate("/google-signin"); 
+      navigate("/google-signin");
     }
   }
   return (
+    <div className="relative min-w-full h-[70vh] sm:h-[99vh] ">
+      <div className="absolute inset-0 z-0">
+        <Waves />
+      </div>
 
-      <div className="relative min-w-full h-[70vh] sm:h-[99vh] ">
-          <div className="absolute inset-0 z-0">
-            <Waves/>
-          </div>
-
-          <div className="relative z-10">
-            <motion.nav 
+      <div className="relative z-10">
+        <motion.nav 
               className="grid grid-cols-2 sm:grid-cols-3 items-center px-6 py-3.5"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -93,53 +92,59 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
             </motion.nav>
 
 
-          <div className="flex flex-col justify-center items-center h-[60vh] sm:h-[75vh] text-white">
-        <motion.h1 
-          className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-10"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
-        >
-          Dive into the Ocean of Data
-        </motion.h1>
+        <div className="flex flex-col justify-center items-center h-[60vh] sm:h-[75vh] text-white">
+          <motion.h1
+            className="text-4xl z-10 sm:text-7xl font-bold md:mt-15 text-center md:ml-11"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3 }}
+          >
+            Dive into the Ocean of Data
+          </motion.h1>
 
-        <motion.h2 
-          className="font-extralight sm:text-xl mt-4 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-        >
-          AI-powered insights from ARGO floats
-        </motion.h2>
-           <motion.div 
-          className="text-center mt-20"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.7, delay: 1 }}
-        >
-          <div className="flex gap-4 justify-center items-center flex-wrap">
-            <motion.button 
-              whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
-              className="bg-cyan-600 font-semibold px-6 py-2 text-xl sm:text-2xl rounded-2xl text-center cursor-pointer"
-              onClick={handleclick}
-            >
-              Start Chatting
-            </motion.button>
-            
-            <motion.button 
-              whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
-              className="bg-cyan-600 font-semibold px-6 py-2 text-xl sm:text-2xl rounded-2xl text-center cursor-pointer"
-              onClick={handleDashboardClick}
-            >
-              Dashboard
-            </motion.button>
-          </div>
-        </motion.div>
+          <motion.h2
+            className="font-extralight sm:text-xl mt-4 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.6 }}
+          >
+            AI-powered insights from ARGO floats
+          </motion.h2>
+          <motion.div
+            className="text-center mt-20"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.7, delay: 1 }}
+          >
+            <div className="flex gap-4 justify-center items-center flex-wrap">
+              <motion.button
+                whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
+                className="bg-cyan-600 font-semibold px-6 py-2 text-xl sm:text-2xl rounded-2xl text-center cursor-pointer"
+                onClick={handleDashboardClick}
+              >
+                Get Started
+              </motion.button>
+            </div>
+          </motion.div>
+          {isSignedIn ?<button
+            onClick={handleChatClick}
+            className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 w-10 h-10 md:w-11 md:h-11 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center group"
+            style={{
+              animation: 'bounce 2s infinite alternate',
+            }}
+            aria-label="Open Chat"
+            title="Chat with FloatChat"
+          >
+            <MessageCircle className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200 relative z-10" />
 
-          </div>
-
-          </div>
+            {/* Pulse effect */}
+            <div className="absolute inset-0 rounded-full bg-cyan-400 opacity-20 animate-ping"></div>
+          </button>
+          :<></>
+          }
+        </div>
       </div>
+    </div>
   )
 }
 
