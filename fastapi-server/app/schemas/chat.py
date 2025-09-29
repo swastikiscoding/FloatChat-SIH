@@ -1,27 +1,53 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+from typing_extensions import Self
 from dataclasses import dataclass, field
 from enum import Enum
 import pandas as pd
 from pydantic_ai import ModelRetry
 #from argopy import DataFetcher as ArgopyDataFetcher
 
+kinds = {'line', 'bar', 'scatter'}
+
 class UserMode(Enum):
     HYBRID = 0
     STUDENT = 1
     RESEARCHER = 2
 
+class Plot_Data(BaseModel):
+    title: str = Field(..., description="Title of the plot.")
+    kind: str = Field(..., description=f"Type of the plot: can only be one of {list(kinds)}.")
+    x_label: str = Field(..., description="Label for the X-axis.")
+    y_label: str = Field(..., description="Label for the Y-axis.")
+    x: list[float] = Field(..., description="X-axis data points.")
+    y: list[float] = Field(..., description="Y-axis data points.")
+
+    @model_validator(mode="after")
+    def check_xy_length(self) -> Self:
+        if len(self.x) != len(self.y):
+            raise ValueError("Length of x and y must be the same.")
+        return self
+    
+    @model_validator(mode="after")
+    def check_kind(self) -> Self:
+        if self.kind not in kinds:
+            raise ValueError(f"Invalid plot kind: {self.kind}. Must be one of {kinds}.")
+        return self
+
 @dataclass
 class AgentDependencies:
-    #argo_fetcher: 'ArgopyDataFetcher' = field(default_factory=lambda: ArgopyDataFetcher(), metadata={"description": "Argopy DataFetcher instance for loading Argo data."})
-    mode: UserMode = field(default_factory=lambda: UserMode.HYBRID, metadata={"description": "Mode of the assistant. Options are HYBRID (0), STUDENT (1), RESEARCHER (2)."})
+    mode: UserMode = field(default_factory=lambda: UserMode.HYBRID)
     output: dict[str, pd.DataFrame] = field(default_factory=dict)
-    plots: dict[str, str] = field(default_factory=dict)
+    plots_data: list[Plot_Data] = field(default_factory=list)
 
-    def store(self, value: pd.DataFrame) -> str:
+    def store_dataframe(self, value: pd.DataFrame) -> str:
         """Store the output in deps and return the reference such as Out[1] to be used by the LLM."""
         ref = f'Out[{len(self.output) + 1}]'
         self.output[ref] = value
         return ref
+    
+    def store_plot_data(self, plot_data: Plot_Data) -> None:
+        """Store the plot data in deps to be sent to the frontend."""
+        self.plots_data.append(plot_data)
 
     def get(self, ref: str) -> pd.DataFrame:
         if ref not in self.output:
@@ -38,4 +64,13 @@ class AgentRequest(BaseModel):
         arbitrary_types_allowed = True # AgentDependencies contains a pd.DataFrame which is not a pydantic type
 
 class AgentResponse(BaseModel):
+    """Agent's raw response data structure."""
     reply: str = Field(..., description="Assistant's reply to the user's message.")
+
+class ChatResponse(BaseModel):
+    """Actual response sent to the frontend via the endpoint."""
+    message: str = Field(..., description="Assistant's reply to the user's message.")
+    plots_data: list[Plot_Data] = Field(default_factory=list, description="List of plot data to be rendered on the frontend.")
+
+    class Config:
+        arbitrary_types_allowed = True # Plot_Data contains a list which is not a pydantic type

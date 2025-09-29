@@ -4,17 +4,16 @@ from pydantic_ai import Tool, RunContext, ModelRetry
 #from pydantic_ai.common_tools.tavily import tavily_search_tool
 # https://ai.pydantic.dev/third-party-tools/
 
-from app.schemas.chat import AgentDependencies
+from app.schemas.chat import AgentDependencies, Plot_Data
 from argopy import DataFetcher as ArgopyDataFetcher
 import duckdb
-
-from loguru import logger
 import pandas as pd
 
-import matplotlib.pyplot as plt
-import io
-import base64
+from loguru import logger
+from pathlib import Path
 
+BASE_DIR = Path(__file__).parent
+CACHE_DIR = str(BASE_DIR / 'cache')
 
 sources = [
     'erddap',
@@ -58,6 +57,7 @@ def load_argo_profile(
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
+            cache=True, cachedir=CACHE_DIR
         )
         data = fetcher.profile(float_id, cyc).to_xarray()
     except FileNotFoundError as e:
@@ -69,7 +69,7 @@ def load_argo_profile(
     
     desc = f"Argo float ID {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}, dataset {dataset}"
     df: pd.DataFrame = data.to_dataframe().reset_index()
-    ref: str = ctx.deps.store(df)
+    ref: str = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
@@ -105,6 +105,7 @@ def load_argo_float(
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
+            cache=True, cachedir=CACHE_DIR
         )
         data = fetcher.float(float_id).to_xarray()
     except FileNotFoundError as e:
@@ -116,7 +117,7 @@ def load_argo_float(
     
     desc = f"Argo float {float_id}, dataset {dataset}"
     df = data.to_dataframe().reset_index()
-    ref = ctx.deps.store(df)
+    ref = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
@@ -163,7 +164,8 @@ def load_argo_region(
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
-            progress=True
+            progress=True,
+            cache=True, cachedir=CACHE_DIR
         )
         data = fetcher.region(box).to_xarray()
     except FileNotFoundError as e:
@@ -175,7 +177,7 @@ def load_argo_region(
 
     desc = f"Argo region {box}, dataset {dataset}"
     df = data.to_dataframe().reset_index()
-    ref = ctx.deps.store(df)
+    ref = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
         f'Description: {desc}',
@@ -224,7 +226,7 @@ def run_duckdb(
         raise ModelRetry(f"Error running DuckDB SQL: {e}")
     
     # pass the result as ref (because DuckDB SQL can select many rows, creating another huge dataframe)
-    ref = ctx.deps.store(result.df())  # pyright: ignore[reportUnknownMemberType]
+    ref = ctx.deps.store_dataframe(result.df())  # pyright: ignore[reportUnknownMemberType]
     output = [
         f'Executed SQL query and stored result inside reference `{ref}`.',
     ]
@@ -253,47 +255,48 @@ def get_some_rows(
 
 def plot_saved_data(
     ctx: RunContext[AgentDependencies],
-    name: str,
-    x: str,
-    y: str,
-    kind: str = "line",
-    title: str | None = None
+    plot_title: str,
+    kind: str,
+    dataframe_ref: str,
+    column_for_x: str,
+    column_for_y: str,
+    x_label: str,
+    y_label: str,
 ) -> None:
     """Plot saved data to show to the user using matplotlib.
     Args:
-        name: reference string to the DataFrame
-        x: column name for x-axis
-        y: column name for y-axis
-        kind: plot type ('line', 'scatter', 'bar')
-        title: optional plot title
+        plot_title: Title of the plot.
+        kind: Type of the plot: 'line', 'bar', or 'scatter'.
+        dataframe_ref: Reference string to the DataFrame to plot.
+        column_for_x: Column name in the DataFrame to use for the X-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
+        column_for_y: Column name in the DataFrame to use for the Y-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
+        x_label: Label for the X-axis; will be displayed on the plot.
+        y_label: Label for the Y-axis; will be displayed on the plot.
     Returns:
         Nothing.
-        The Base64-encoded PNG image string is stored in memory to be retrieved later.
     """
-    logger.info(f"Plotting data: dataset={name}, x={x}, y={y}, kind={kind}")
-    df = ctx.deps.get(name)
-    fig, ax = plt.subplots()
-    if kind == "line":
-        ax.plot(df[x], df[y])
-    elif kind == "scatter":
-        ax.scatter(df[x], df[y])
-    elif kind == "bar":
-        ax.bar(df[x], df[y])
-    else:
-        raise ModelRetry(f"Unsupported plot kind: {kind}. Try again with 'line', 'scatter', or 'bar'.")
-    ax.set_xlabel(x)
-    ax.set_ylabel(y)
-    if title:
-        ax.set_title(title)
-    buf = io.BytesIO()
-    plt.tight_layout()
-    plt.savefig(buf, format="png")
-    plt.close(fig)
-    buf.seek(0)
-    img_b64 = base64.b64encode(buf.read()).decode("utf-8")
-    logger.info(f"Plotted data for {name} as base64 PNG.")
-    plt_str = f"data:image/png;base64,{img_b64}"
-    #return f"data:image/png;base64,{img_b64}" LETS NOT BLOW UP AI CREDITS
+    logger.info(f"Plotting data from dataframe={dataframe_ref}, x={column_for_x}, y={column_for_y}, kind={kind}, title={plot_title}, x_label={x_label}, y_label={y_label}.")
+
+    try:
+        df = ctx.deps.get(dataframe_ref)
+    except Exception as e:
+        logger.error(f"Error retrieving dataframe: {e}")
+        raise ModelRetry(f"Error retrieving dataframe: {e}")
+
+    try:
+        plot_data = Plot_Data(
+            title=plot_title,
+            kind=kind,
+            x_label=x_label,
+            y_label=y_label,
+            x=df[column_for_x].dropna().tolist(),
+            y=df[column_for_y].dropna().tolist(),
+        )
+    except Exception as e:
+        logger.error(f"Error creating plot data: {e}")
+        raise ModelRetry(f"Error creating plot data: {e}")
+    
+    ctx.deps.store_plot_data(plot_data)
 
 
 all_tools = [
