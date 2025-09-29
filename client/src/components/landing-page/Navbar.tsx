@@ -38,18 +38,22 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
 
           <div className="relative z-10">
             <motion.nav 
-              className="grid grid-cols-2 sm:grid-cols-3 items-center px-6 py-2"
+              className="grid grid-cols-2 sm:grid-cols-3 items-center px-6 py-3.5"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               {/* Left Column - Logo */}
               <motion.div 
-                className="flex gap-2 items-center justify-start"
-                whileHover={{ scale: 1.04 }}
+                className="flex gap-2 items-start justify-start"
               >
-                <img src={icon} alt="logo" className="w-9 h-9"/>
-                <div className="font-semibold text-xl">FloatChat</div>
+                <motion.div 
+                className="flex gap-2 items-center pb-0.5"
+                whileHover={{ scale: 1.04 }}
+                >
+                  <img src={icon} alt="logo" className="w-8.5 h-8.5"/>
+                  <div className="font-semibold text-[20px]">FloatChat</div>
+                </motion.div>
               </motion.div>
 
               {/* Center Column - Menu (subgrid with 3 items) */}
@@ -72,14 +76,14 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
               </motion.div>
 
               {/* Right Column - Sign In / User */}
-              <div className="flex justify-end items-center gap-4 mb-2">
+              <div className="flex justify-end items-center gap-4">
                 <SignedIn>
                   <UserButton />
                 </SignedIn>
                 <SignedOut>
                   <motion.button 
-                    whileHover={{ scale: 1.1, backgroundColor: "#0c6a85" }}
-                    className="bg-[#095268] font-semibold px-4 py-2 rounded-2xl cursor-pointer"
+                    whileHover={{ scale: 1.1, backgroundColor: "#0284c7" }}
+                    className="bg-cyan-700 font-semibold px-4 py-1.5 rounded-2xl cursor-pointer"
                     onClick={() => navigate("/google-signin")}
                   >
                     Sign In
@@ -91,7 +95,7 @@ const Navbar = ({ onFaqClick, onFeaturesClick, onAboutClick }:NavbarProps) => {
 
           <div className="flex flex-col justify-center items-center h-[60vh] sm:h-[75vh] text-white">
         <motion.h1 
-          className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-14"
+          className="text-4xl z-10 sm:text-7xl font-bold mt-15 text-center ml-10"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
