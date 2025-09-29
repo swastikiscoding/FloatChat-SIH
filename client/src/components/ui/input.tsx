@@ -27,12 +27,14 @@ function Input({ className, onSubmit, ...props }: InputProps) {
         onChange={(e) => setValue(e.target.value)}
         className={cn(
           "w-full min-h-15 md:min-h-20 max-h-20 md:max-h-22 px-3 md:px-5 pr-12 md:pr-14 py-2 md:py-3 resize-none rounded-2xl outline-none",
-          "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
+          // "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
+          "bg-black",
           "border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.6)]",
           "text-gray-200 placeholder:text-gray-500 text-sm md:text-base",
           "overflow-auto",
           'font-light text-gray-300',
           'placeholder:text-sm md:placeholder:text-[15px]',
+          'hover:shadow-[0_0_6px_rgba(0,255,255,0.3)] focus:shadow-[0_0_6px_rgba(0,255,255,0.3)] transition-shadow duration-500 ease-out',
           className
         )}
         onInput={e => {
