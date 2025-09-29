@@ -22,13 +22,13 @@ const ModeSelect = () => {
 
   return (
     <div
-      className="relative group" 
+      className="relative group w-full" 
       ref={dropdownRef}
     >
       <div className="relative" >
         <button
           onClick={() => setOpen(!open)}
-          className="flex items-center justify-center px-1 p-2 mt-2 mb-2 w-full rounded-lg text-gray-200 text-sm border border-white/40 transition-all duration-200 hover:scale-[1.02] hover:bg-gray-800/50 hover:border-white/50"
+          className="flex items-center justify-center px-1 p-2 mt-2 mb-2 mx-auto w-[98%] rounded-lg text-gray-200 text-sm border border-white/40 transition-all duration-200 hover:scale-[1.02] hover:bg-gray-800/50 hover:border-white/50"
         >
           {/* Left side: icon + label */}
           <div className="flex items-center justify-center gap-2 w-17/20">

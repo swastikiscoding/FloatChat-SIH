@@ -19,7 +19,7 @@ export function AppSidebar() {
       <SidebarHeader className="bg-gray-950">
         {/* Mobile Close Button and Logo */}
         <div className="flex items-center justify-between pl-0 pt-2 ml-1 mt-1">
-          <button className="flex items-center">
+          <button className="flex items-center mb-3">
             <Shell className="w-6 h-6 text-cyan-400 hover:scale-115" />
             <span className="text-2xl pl-3 group-data-[collapsible=icon]:hidden">
               FloatChat
@@ -45,7 +45,7 @@ export function AppSidebar() {
         <ModeSelect />
 
         {/* Chats heading should completely hide on collapse */}
-        <span className="text-sm ml-3 mt-8 mb-1 text-cyan-400 group-data-[collapsible=icon]:hidden">
+        <span className="text-sm ml-3 mt-8 mb-1 text-cyan-400 group-data-[collapsible=icon]:hidden ">
           Chats
         </span>
       </SidebarHeader>
@@ -63,7 +63,7 @@ export function AppSidebar() {
           <UserButton 
             appearance={{
               elements: {
-                avatarBox: "w-8 h-8 rounded-lg border border-cyan-400/30",
+                avatarBox: "w-20 h-20 rounded-lg border border-cyan-400/30",
                 userButtonPopoverCard: "bg-gray-900 border border-gray-700 shadow-lg",
                 userButtonPopoverActions: "bg-gray-900",
                 userButtonPopoverActionButton: "text-gray-300 hover:bg-gray-800 hover:text-white transition-colors",

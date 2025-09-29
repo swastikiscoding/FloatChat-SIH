@@ -47,9 +47,15 @@ export const postMessage = async (req, res) => {
                 }
             }
         });
-        const aiMessage = response.data.reply;
+        const aiMessage = response.data.message;
+        const plotsData = response.data.plots_data || [];
         const newChat = await Chat.findByIdAndUpdate(chatId, { $push: { messages: { AIMessage: aiMessage, userMessage: message } } }, { new: true });
-        res.status(200).json({message: "Message posted successfully", chat: newChat.messages, chatId});
+        res.status(200).json({
+            message: "Message posted successfully", 
+            chat: newChat.messages, 
+            chatId,
+            plots_data: plotsData
+        });
 
 
     }catch(error){

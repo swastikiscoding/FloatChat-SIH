@@ -6,7 +6,7 @@ import ContextProvider from "./context/Context"
 export default function Chatbot() {
   return (
     <ContextProvider>
-      <div className="flex h-screen w-full bg-gray-900 overflow-hidden">
+      <div className="flex h-screen w-full bg-gray-950">
         <SidebarProvider>
           <AppSidebar/>
           <RightSection/>

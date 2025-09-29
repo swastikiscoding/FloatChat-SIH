@@ -52,14 +52,14 @@ def load_argo_profile(
 
     try:
         fetcher = ArgopyDataFetcher(
-            mode='standard',
+            mode='standard' if dataset == 'phy' else 'expert',
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
             cache=True, cachedir=CACHE_DIR
         )
-        data = fetcher.profile(float_id, cyc).to_xarray()
+        df = fetcher.profile(float_id, cyc).to_dataframe().reset_index()
     except FileNotFoundError as e:
         logger.error(f"Error: {e}\nWebsite may be down.")
         raise ModelRetry(f"Error: {e}\n{website_down_msg}")
@@ -68,7 +68,6 @@ def load_argo_profile(
         raise ModelRetry(f"Error loading Argo profile data: {e}")
     
     desc = f"Argo float ID {float_id}, cycle{'s' if isinstance(cyc, list) else ''} {cyc}, dataset {dataset}"
-    df: pd.DataFrame = data.to_dataframe().reset_index()
     ref: str = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
@@ -100,14 +99,14 @@ def load_argo_float(
 
     try:
         fetcher = ArgopyDataFetcher(
-            mode='standard',
+            mode='standard' if dataset == 'phy' else 'expert',
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
             cache=True, cachedir=CACHE_DIR
         )
-        data = fetcher.float(float_id).to_xarray()
+        df = fetcher.float(float_id).to_dataframe().reset_index()
     except FileNotFoundError as e:
         logger.error(f"Error: {e}\nWebsite may be down.")
         raise ModelRetry(f"Error: {e}\n{website_down_msg}")
@@ -116,7 +115,6 @@ def load_argo_float(
         raise ModelRetry(f"Error loading Argo float data: {e}")
     
     desc = f"Argo float {float_id}, dataset {dataset}"
-    df = data.to_dataframe().reset_index()
     ref = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
@@ -160,14 +158,14 @@ def load_argo_region(
     logger.info(f"Loading Argo region data: box={box}, dataset={dataset}, source={source}")
     try:
         fetcher = ArgopyDataFetcher(
-            mode='standard',
+            'standard' if dataset == 'phy' else 'expert',
             src=source, # 'erddap' or 'argovis'
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
             cache=True, cachedir=CACHE_DIR
         )
-        data = fetcher.region(box).to_xarray()
+        df = fetcher.region(box).to_dataframe().reset_index()
     except FileNotFoundError as e:
         logger.error(f"Error: {e}\nWebsite may be down.")
         raise ModelRetry(f"Error: {e}\n{website_down_msg}")
@@ -176,7 +174,6 @@ def load_argo_region(
         raise ModelRetry(f"Error loading Argo region data: {e}")
 
     desc = f"Argo region {box}, dataset {dataset}"
-    df = data.to_dataframe().reset_index()
     ref = ctx.deps.store_dataframe(df)
     output = [
         f'Loaded Argo data inside reference `{ref}`.',
@@ -202,8 +199,7 @@ def run_duckdb(
     You can use standard SQL syntax to query the data.
     Example SQL query:
         SELECT AVG(TEMP) FROM {virtual_table_name} WHERE PRES >= 490.0;
-    Make sure that the table name `{virtual_table_name}` is used in your SQL query.
-    Using `{dataframe_ref}` as table name will result in an error! `SELECT * FROM {dataframe_ref}` is INVALID SQL and won't work!
+    Make sure that the table name `{virtual_table_name}` is used in your SQL query, not `{dataframe_ref}`!
 
     Note: The result of the query is stored as a new DataFrame reference, not given directly to you.
     """
@@ -268,29 +264,102 @@ def plot_saved_data(
         plot_title: Title of the plot.
         kind: Type of the plot: 'line', 'bar', or 'scatter'.
         dataframe_ref: Reference string to the DataFrame to plot.
-        column_for_x: Column name in the DataFrame to use for the X-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
-        column_for_y: Column name in the DataFrame to use for the Y-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
+        column_for_x: Column name in the DataFrame to use for the X-axis. Must be a valid column name in the DataFrame. Can contain numeric, datetime, or date string data that will be converted to numeric values.
+        column_for_y: Column name in the DataFrame to use for the Y-axis. Must be a valid column name in the DataFrame. Can contain numeric, datetime, or date string data that will be converted to numeric values.
         x_label: Label for the X-axis; will be displayed on the plot.
         y_label: Label for the Y-axis; will be displayed on the plot.
     Returns:
-        Nothing.
+        Nothing. The URL, the contents, nothing about the plot is returned to the LLM. It will all be kept away from you and shown directly to the user.
     """
     logger.info(f"Plotting data from dataframe={dataframe_ref}, x={column_for_x}, y={column_for_y}, kind={kind}, title={plot_title}, x_label={x_label}, y_label={y_label}.")
 
     try:
         df = ctx.deps.get(dataframe_ref)
+        logger.debug(f"Retrieved dataframe with shape {df.shape} and columns: {list(df.columns)}")
+        logger.debug(f"X column '{column_for_x}' dtype: {df[column_for_x].dtype}")
+        logger.debug(f"Y column '{column_for_y}' dtype: {df[column_for_y].dtype}")
     except Exception as e:
         logger.error(f"Error retrieving dataframe: {e}")
         raise ModelRetry(f"Error retrieving dataframe: {e}")
 
     try:
+        # Get the data and handle different data types
+        x_data = df[column_for_x].dropna()
+        y_data = df[column_for_y].dropna()
+        
+        logger.debug(f"Processing X data with dtype: {x_data.dtype}, sample values: {x_data.head().tolist()}")
+        logger.debug(f"Processing Y data with dtype: {y_data.dtype}, sample values: {y_data.head().tolist()}")
+        
+        def convert_data_for_plot(data, column_name):
+            """Convert pandas Series to appropriate format for plotting"""
+            # First check if it's already numeric
+            if pd.api.types.is_numeric_dtype(data):
+                return pd.to_numeric(data, errors='coerce').dropna().astype(float).tolist(), "numeric"
+            
+            # Check if it's datetime
+            if pd.api.types.is_datetime64_any_dtype(data):
+                # Keep as datetime strings for better frontend display
+                clean_data = pd.to_datetime(data).dropna()
+                return clean_data.dt.strftime('%Y-%m-%d %H:%M:%S').tolist(), "datetime"
+            
+            # Handle object dtype (could be strings, dates, etc.)
+            if data.dtype == 'object':
+                # Try to parse as datetime first
+                try:
+                    datetime_series = pd.to_datetime(data, errors='raise').dropna()
+                    # Return as formatted date strings
+                    return datetime_series.dt.strftime('%Y-%m-%d %H:%M:%S').tolist(), "datetime"
+                except:
+                    # If datetime parsing fails, try numeric conversion
+                    try:
+                        numeric_series = pd.to_numeric(data, errors='coerce').dropna()
+                        return numeric_series.astype(float).tolist(), "numeric"
+                    except:
+                        raise ModelRetry(f"Cannot convert column '{column_name}' to plot data. Contains non-convertible values.")
+            
+            # For any other dtype, try force conversion to numeric
+            try:
+                return pd.to_numeric(data, errors='coerce').dropna().astype(float).tolist(), "numeric"
+            except:
+                raise ModelRetry(f"Cannot convert column '{column_name}' with dtype {data.dtype} to plot data.")
+        
+        # Convert both axes to appropriate format
+        x_values, x_data_type = convert_data_for_plot(x_data, column_for_x)
+        y_values, y_data_type = convert_data_for_plot(y_data, column_for_y)
+        
+        logger.debug(f"Converted X values (first 5): {x_values[:5] if len(x_values) > 5 else x_values}")
+        logger.debug(f"Converted Y values (first 5): {y_values[:5] if len(y_values) > 5 else y_values}")
+        
+        # Ensure both arrays have the same length after conversion
+        min_length = min(len(x_values), len(y_values))
+        if min_length == 0:
+            raise ModelRetry("No valid numeric data remaining after conversion and cleaning.")
+            
+        x_values = x_values[:min_length]
+        y_values = y_values[:min_length]
+        
+        # Final validation - ensure all values are appropriate type
+        expected_x_types = (int, float) if x_data_type == "numeric" else (str,)
+        expected_y_types = (int, float) if y_data_type == "numeric" else (str,)
+        
+        if not all(isinstance(x, expected_x_types) for x in x_values):
+            raise ModelRetry(f"X values contain unexpected data types after conversion: {[type(x).__name__ for x in x_values[:5]]}")
+        if not all(isinstance(y, expected_y_types) for y in y_values):
+            raise ModelRetry(f"Y values contain unexpected data types after conversion: {[type(y).__name__ for y in y_values[:5]]}")
+        
+        logger.info(f"Creating plot with {len(x_values)} data points")
+        logger.debug(f"X data type: {x_data_type}, sample values: {x_values[:3]}")
+        logger.debug(f"Y data type: {y_data_type}, sample values: {y_values[:3]}")
+        
         plot_data = Plot_Data(
             title=plot_title,
             kind=kind,
             x_label=x_label,
             y_label=y_label,
-            x=df[column_for_x].dropna().tolist(),
-            y=df[column_for_y].dropna().tolist(),
+            x=x_values,
+            y=y_values,
+            x_type=x_data_type,
+            y_type=y_data_type,
         )
     except Exception as e:
         logger.error(f"Error creating plot data: {e}")
@@ -305,7 +374,7 @@ all_tools = [
     Tool(load_argo_region, sequential=True),
     Tool(run_duckdb, sequential=True),
     Tool(get_some_rows, sequential=True),
-    #Tool(plot_saved_data, sequential=True), # don't trust the AI to use this just yet
+    Tool(plot_saved_data, sequential=True),
 ]
 
 
