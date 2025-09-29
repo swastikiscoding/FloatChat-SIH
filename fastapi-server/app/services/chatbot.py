@@ -1,4 +1,4 @@
-from app.schemas.chat import AgentRequest, AgentResponse, AgentDependencies, UserMode
+from app.schemas.chat import AgentRequest, AgentResponse, AgentDependencies, UserMode, ChatResponse, Plot_Data
 from app.services.tools import all_tools
 from pydantic_ai import Agent, ModelSettings, RunContext
 from pydantic_ai.models.openai import OpenAIChatModel
@@ -85,16 +85,19 @@ def get_student_sys_prompt(ctx: RunContext[AgentDependencies]) -> str:
         case UserMode.HYBRID:
             return ""
 
-def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[AgentResponse, list[ModelMessage]]:
+def get_bot_response_with_new_history(request: AgentRequest, history: list[ModelMessage]) -> tuple[ChatResponse, list[ModelMessage]]:
     response: AgentRunResult[AgentResponse] = agent.run_sync(request.message, deps=request.deps, message_history=history)
     new_history = response.new_messages()
     logger.info(f"User message: {request.message}")
     logger.info(f"Bot response: {response.output.reply}")
-    return response.output, new_history
+
+    # Get the plots data from deps to be sent to the frontend
+    plots_data: list[Plot_Data] = request.deps.plots_data
+    return ChatResponse(message=response.output.reply, plots_data=plots_data), new_history
 
 if __name__ == "__main__":
     #test_credentials()
-    response: AgentResponse
+    response: ChatResponse
     response, history = get_bot_response_with_new_history(
         AgentRequest(
             message="Show me salinity profiles near the equator in March 2023",
