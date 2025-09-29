@@ -42,7 +42,7 @@ const RightBottom = () => {
     };
   };
   return (
-    <div className='h-5/28 rounded-b-2xl px-4 md:px-15 pt-3 md:pt-5'>
+    <div className='h-5/28 w-full rounded-b-2xl pt-3 md:pt-5 flex flex-col justify-end mb-1'>
       <div className="relative w-full">
       <Input onSubmit={handleSubmit} disabled={loading}  />
       <button 
