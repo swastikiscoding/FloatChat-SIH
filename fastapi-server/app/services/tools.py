@@ -268,8 +268,8 @@ def plot_saved_data(
         plot_title: Title of the plot.
         kind: Type of the plot: 'line', 'bar', or 'scatter'.
         dataframe_ref: Reference string to the DataFrame to plot.
-        column_for_x: Column name in the DataFrame to use for the X-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
-        column_for_y: Column name in the DataFrame to use for the Y-axis. Must be a valid column name in the DataFrame, and the data in this column must be numeric.
+        column_for_x: Column name in the DataFrame to use for the X-axis. Must be a valid column name in the DataFrame. Can contain numeric, datetime, or date string data that will be converted to numeric values.
+        column_for_y: Column name in the DataFrame to use for the Y-axis. Must be a valid column name in the DataFrame. Can contain numeric, datetime, or date string data that will be converted to numeric values.
         x_label: Label for the X-axis; will be displayed on the plot.
         y_label: Label for the Y-axis; will be displayed on the plot.
     Returns:
@@ -279,18 +279,91 @@ def plot_saved_data(
 
     try:
         df = ctx.deps.get(dataframe_ref)
+        logger.debug(f"Retrieved dataframe with shape {df.shape} and columns: {list(df.columns)}")
+        logger.debug(f"X column '{column_for_x}' dtype: {df[column_for_x].dtype}")
+        logger.debug(f"Y column '{column_for_y}' dtype: {df[column_for_y].dtype}")
     except Exception as e:
         logger.error(f"Error retrieving dataframe: {e}")
         raise ModelRetry(f"Error retrieving dataframe: {e}")
 
     try:
+        # Get the data and handle different data types
+        x_data = df[column_for_x].dropna()
+        y_data = df[column_for_y].dropna()
+        
+        logger.debug(f"Processing X data with dtype: {x_data.dtype}, sample values: {x_data.head().tolist()}")
+        logger.debug(f"Processing Y data with dtype: {y_data.dtype}, sample values: {y_data.head().tolist()}")
+        
+        def convert_data_for_plot(data, column_name):
+            """Convert pandas Series to appropriate format for plotting"""
+            # First check if it's already numeric
+            if pd.api.types.is_numeric_dtype(data):
+                return pd.to_numeric(data, errors='coerce').dropna().astype(float).tolist(), "numeric"
+            
+            # Check if it's datetime
+            if pd.api.types.is_datetime64_any_dtype(data):
+                # Keep as datetime strings for better frontend display
+                clean_data = pd.to_datetime(data).dropna()
+                return clean_data.dt.strftime('%Y-%m-%d %H:%M:%S').tolist(), "datetime"
+            
+            # Handle object dtype (could be strings, dates, etc.)
+            if data.dtype == 'object':
+                # Try to parse as datetime first
+                try:
+                    datetime_series = pd.to_datetime(data, errors='raise').dropna()
+                    # Return as formatted date strings
+                    return datetime_series.dt.strftime('%Y-%m-%d %H:%M:%S').tolist(), "datetime"
+                except:
+                    # If datetime parsing fails, try numeric conversion
+                    try:
+                        numeric_series = pd.to_numeric(data, errors='coerce').dropna()
+                        return numeric_series.astype(float).tolist(), "numeric"
+                    except:
+                        raise ModelRetry(f"Cannot convert column '{column_name}' to plot data. Contains non-convertible values.")
+            
+            # For any other dtype, try force conversion to numeric
+            try:
+                return pd.to_numeric(data, errors='coerce').dropna().astype(float).tolist(), "numeric"
+            except:
+                raise ModelRetry(f"Cannot convert column '{column_name}' with dtype {data.dtype} to plot data.")
+        
+        # Convert both axes to appropriate format
+        x_values, x_data_type = convert_data_for_plot(x_data, column_for_x)
+        y_values, y_data_type = convert_data_for_plot(y_data, column_for_y)
+        
+        logger.debug(f"Converted X values (first 5): {x_values[:5] if len(x_values) > 5 else x_values}")
+        logger.debug(f"Converted Y values (first 5): {y_values[:5] if len(y_values) > 5 else y_values}")
+        
+        # Ensure both arrays have the same length after conversion
+        min_length = min(len(x_values), len(y_values))
+        if min_length == 0:
+            raise ModelRetry("No valid numeric data remaining after conversion and cleaning.")
+            
+        x_values = x_values[:min_length]
+        y_values = y_values[:min_length]
+        
+        # Final validation - ensure all values are appropriate type
+        expected_x_types = (int, float) if x_data_type == "numeric" else (str,)
+        expected_y_types = (int, float) if y_data_type == "numeric" else (str,)
+        
+        if not all(isinstance(x, expected_x_types) for x in x_values):
+            raise ModelRetry(f"X values contain unexpected data types after conversion: {[type(x).__name__ for x in x_values[:5]]}")
+        if not all(isinstance(y, expected_y_types) for y in y_values):
+            raise ModelRetry(f"Y values contain unexpected data types after conversion: {[type(y).__name__ for y in y_values[:5]]}")
+        
+        logger.info(f"Creating plot with {len(x_values)} data points")
+        logger.debug(f"X data type: {x_data_type}, sample values: {x_values[:3]}")
+        logger.debug(f"Y data type: {y_data_type}, sample values: {y_values[:3]}")
+        
         plot_data = Plot_Data(
             title=plot_title,
             kind=kind,
             x_label=x_label,
             y_label=y_label,
-            x=df[column_for_x].dropna().tolist(),
-            y=df[column_for_y].dropna().tolist(),
+            x=x_values,
+            y=y_values,
+            x_type=x_data_type,
+            y_type=y_data_type,
         )
     except Exception as e:
         logger.error(f"Error creating plot data: {e}")

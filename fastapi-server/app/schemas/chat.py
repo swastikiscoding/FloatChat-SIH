@@ -18,8 +18,10 @@ class Plot_Data(BaseModel):
     kind: str = Field(..., description=f"Type of the plot: can only be one of {list(kinds)}.")
     x_label: str = Field(..., description="Label for the X-axis.")
     y_label: str = Field(..., description="Label for the Y-axis.")
-    x: list[float | int] = Field(..., description="X-axis data points.")
-    y: list[float | int] = Field(..., description="Y-axis data points.")
+    x: list[float | int | str] = Field(..., description="X-axis data points. Can be numeric or date strings.")
+    y: list[float | int | str] = Field(..., description="Y-axis data points. Can be numeric or date strings.")
+    x_type: str = Field(default="numeric", description="Type of x-axis data: 'numeric' or 'datetime'")
+    y_type: str = Field(default="numeric", description="Type of y-axis data: 'numeric' or 'datetime'")
 
     @model_validator(mode="after")
     def check_xy_length(self) -> Self:
