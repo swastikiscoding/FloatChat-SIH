@@ -69,7 +69,7 @@ const ChatHistory = () => {
    const getChatTitle = (chat: Chat) => {
      // Handle cases where title might be undefined or empty
      const title = chat.title || "Untitled Chat";
-     return title.length > 35 ? title.slice(0, 35) + ".." : title;
+     return title.length > 50 ? title.slice(0, 50) + ".." : title;
    };
   
   return (
