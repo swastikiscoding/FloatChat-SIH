@@ -5,9 +5,10 @@ import { ArrowUp } from "lucide-react"
 
 interface InputProps extends Omit<React.ComponentProps<"textarea">, 'onSubmit'> {
   onSubmit?: (value: string) => void;
+  micButton?: React.ReactNode;
 }
 
-function Input({ className, onSubmit, ...props }: InputProps) {
+function Input({ className, onSubmit, micButton, ...props }: InputProps) {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [value, setValue] = React.useState("");
 
@@ -57,6 +58,13 @@ function Input({ className, onSubmit, ...props }: InputProps) {
         }}
         {...props}
       />
+
+      {/* Mic Button */}
+      {micButton && (
+        <div className="absolute bottom-2 md:bottom-4 right-10 md:right-12">
+          {micButton}
+        </div>
+      )}
 
       {/* Arrow Button */}
       <button
