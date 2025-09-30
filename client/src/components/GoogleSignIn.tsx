@@ -46,10 +46,10 @@ export default function GoogleSignInButton() {
               <span className="text-base font-extralight sm:text-lg">Continue with Google</span>
             </button>
           </div>
-          <div className="text-gray-400/70 text-xs mt-2 flex justify-center items-center sm:text-sm">
+          {/* <div className="text-gray-400/70 text-xs mt-2 flex justify-center items-center sm:text-sm">
             <img src={clerkSvg} alt="" className="w-5 h-5 mr-1 rounded-2xl sm:w-6 sm:h-6 sm:mr-2" />
-            Powered by clerk
-          </div>
+            
+          </div> */}
         </div>
       </div>
     </div>
