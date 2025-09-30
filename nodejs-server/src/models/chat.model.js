@@ -13,7 +13,8 @@ const chatSchema = new Schema({
     messages: [
         {
             AIMessage: {type: String, required: true},
-            userMessage: {type: String, required: true}
+            userMessage: {type: String, required: true},
+            plots_data: {type: Array, required: false, default: []}
         }
     ]
 }, {timestamps: true});

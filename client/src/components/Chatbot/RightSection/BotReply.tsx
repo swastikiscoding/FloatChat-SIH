@@ -1,12 +1,50 @@
 import { Shell } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useState, useEffect } from "react";
+import ChartVisualization from './ChartVisualization';
 
-const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
+interface PlotData {
+  title: string;
+  kind: string;
+  x_label: string;
+  y_label: string;
+  x: (number | string)[];
+  y: (number | string)[];
+  x_type?: string;
+  y_type?: string;
+}
+
+const BotReply = ( { Text, loading, plotsData }: { Text: string; loading?: boolean; plotsData?: PlotData[] } ) => {
+  const [speaking, setSpeaking] = useState(false);
+
+  const handleSpeak = () => {
+   if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(Text);
+      utterance.lang = "en-US";
+      utterance.rate = 1;
+      utterance.pitch = 1;
+
+      utterance.onstart = () => setSpeaking(true);
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+  const isError = Text?.toLowerCase().includes("something went wrong");
   return (
     <div className='flex items-start justify-start gap-1 md:gap-2'>
-      <Shell className='text-cyan-400 mt-1 flex-shrink-0 w-4 h-4 md:w-5 md:h-5'/>
-      <div className="bg-gray-950 pl-2 pr-3 py-2 rounded-xl w-full ml-1 md:ml-2 text-xs md:text-sm text-gray-300">
+      <Shell className='text-cyan-400 mt-2.5 flex-shrink-0 w-4 h-4 md:w-5 md:h-5'/>
+      <div className="bg-gray-950 pl-2 pr-3 py-2 rounded-xl w-full ml-1 md:ml-2 text-sm md:text-base text-gray-300">
         {loading ? (
           <div className="flex flex-col gap-2 w-full">
             <div className="animate-pulse h-2 md:h-3 bg-gray-700 rounded w-3/4"></div>
@@ -19,6 +57,10 @@ const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
           </div>
         ) : (
           <div className="prose prose-sm md:prose prose-invert max-w-none break-words [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
+            
+            {isError && (
+              <button onClick={handleSpeak} className="p-2 px-3 bg-[#007595] hover:bg-cyan-800 rounded-2xl mb-2 cursor-pointer" >{speaking ? "⏹ Stop" : "🔊 Speak"}</button>
+            )}
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -56,8 +98,14 @@ const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
                 ),
               }}
             >
+              
               {Text}
             </ReactMarkdown>
+            
+            {/* Render charts if plots_data exists */}
+            {plotsData && plotsData.length > 0 && (
+              <ChartVisualization plotsData={plotsData} />
+            )}
           </div>
         )}
       </div>
