@@ -26,7 +26,7 @@ export const postMessage = async (req, res) => {
         console.log("Received message:", message, "for chatId:", chatId, "with mode:", mode);
         if(chatId === 'new'){
             // Create title from first message (truncate if too long)
-            const chatTitle = message.length > 50 ? message.slice(0, 50) + "..." : message;
+            const chatTitle = message;
             const chat = new Chat({ messages: [] , title: chatTitle, userId });
             await chat.save();
             chatId = chat._id;
@@ -49,7 +49,7 @@ export const postMessage = async (req, res) => {
         });
         const aiMessage = response.data.message;
         const plotsData = response.data.plots_data || [];
-        const newChat = await Chat.findByIdAndUpdate(chatId, { $push: { messages: { AIMessage: aiMessage, userMessage: message } } }, { new: true });
+        const newChat = await Chat.findByIdAndUpdate(chatId, { $push: { messages: { AIMessage: aiMessage, userMessage: message, plots_data: plotsData } } }, { new: true });
         res.status(200).json({
             message: "Message posted successfully", 
             chat: newChat.messages, 

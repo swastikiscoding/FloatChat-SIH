@@ -2,9 +2,21 @@ import React, { createContext, useState, type ReactNode } from "react";
 import { axiosInstance } from "../../../utils/axiosInstance";
 import { useAuth } from "@clerk/clerk-react";
 
+interface PlotData {
+  title: string;
+  kind: string;
+  x_label: string;
+  y_label: string;
+  x: (number | string)[];
+  y: (number | string)[];
+  x_type?: string;
+  y_type?: string;
+}
+
 interface Message {
   userMessage: string;
   AIMessage: string;
+  plots_data?: PlotData[];
 }
 
 interface ContextType {
@@ -24,6 +36,7 @@ interface ContextType {
   loadChat: (chatId: string) => Promise<void>;
   mode: string;
   setMode: React.Dispatch<React.SetStateAction<string>>;
+  currentPlotsData: PlotData[];
 }
 
 interface ProviderProps {
@@ -44,6 +57,7 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [mode, setMode] = useState<string>("Student");
+  const [currentPlotsData, setCurrentPlotsData] = useState<PlotData[]>([]);
 
   const newChat = () => {
     setloading(false);
@@ -53,6 +67,7 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     setrecentPrompt("");
     setCurrentChatId(null);
     setMessages([]);
+    setCurrentPlotsData([]);
     console.log("New chat started");
   };
 
@@ -125,6 +140,9 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
       const latestMessage = chatData.chat[chatData.chat.length - 1];
       const aiResponse = latestMessage.AIMessage;
 
+      // Update current plots data for the active conversation
+      setCurrentPlotsData(latestMessage.plots_data || []);
+
       // Use the raw response without HTML formatting for ReactMarkdown
       setresult(aiResponse);
 
@@ -155,6 +173,7 @@ const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
     loadChat,
     mode,
     setMode,
+    currentPlotsData,
   };
 
   return (

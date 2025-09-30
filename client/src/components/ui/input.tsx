@@ -5,9 +5,10 @@ import { ArrowUp } from "lucide-react"
 
 interface InputProps extends Omit<React.ComponentProps<"textarea">, 'onSubmit'> {
   onSubmit?: (value: string) => void;
+  micButton?: React.ReactNode;
 }
 
-function Input({ className, onSubmit, ...props }: InputProps) {
+function Input({ className, onSubmit, micButton, ...props }: InputProps) {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [value, setValue] = React.useState("");
 
@@ -19,21 +20,22 @@ function Input({ className, onSubmit, ...props }: InputProps) {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-[81%] mx-auto">
       <textarea
         rows={1}
         placeholder="Ask about sea temperature, salinity, or trends..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className={cn(
-          "w-full min-h-12 md:min-h-20 max-h-20 md:max-h-22 px-3 md:px-5 pr-12 md:pr-25 py-2 md:py-3 resize-none rounded-2xl outline-none",
-          "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
+          "w-full min-h-15 md:min-h-20 max-h-20 md:max-h-22 px-3 md:px-5 pr-12 md:pr-14 py-2 md:py-3 resize-none rounded-2xl outline-none",
+          // "bg-gradient-to-b from-black/25 to-gray-900/70 dark:from-gray-900/50 dark:to-gray-950/70",
+          "bg-cyan-700/15",
           "border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.6)]",
           "text-gray-200 placeholder:text-gray-500 text-sm md:text-base",
           "overflow-auto",
-          "shadow-[1px_1px_10px_rgba(0,200,255,0.3)]",
           'font-light text-gray-300',
           'placeholder:text-sm md:placeholder:text-[15px]',
+          'hover:shadow-[0_0_6px_rgba(0,240,255,0.3)] focus:shadow-[0_0_6px_rgba(0,240,255,0.3)] transition-shadow duration-500 ease-out',
           className
         )}
         onInput={e => {
@@ -56,6 +58,13 @@ function Input({ className, onSubmit, ...props }: InputProps) {
         }}
         {...props}
       />
+
+      {/* Mic Button */}
+      {micButton && (
+        <div className="absolute bottom-2 md:bottom-4 right-10 md:right-12">
+          {micButton}
+        </div>
+      )}
 
       {/* Arrow Button */}
       <button

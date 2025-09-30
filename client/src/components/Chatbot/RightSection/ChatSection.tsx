@@ -5,6 +5,7 @@ import { EarthIcon } from "lucide-react";
 import BotReply from "./BotReply";
 import UserQuerry from "./UserQuery.tsx";
 import { Context } from "../context/Context.tsx";
+import { SidebarTrigger } from "@/components/ui/sidebar.tsx";
 
 const ChatSection: React.FC = () => {
   const { user, isLoaded } = useUser();
@@ -16,6 +17,7 @@ const ChatSection: React.FC = () => {
     loading,
     showResult,
     messages,
+    currentPlotsData,
   } = useContext(Context);
 
   // Handle card click
@@ -36,28 +38,25 @@ const ChatSection: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-950 text-white relative w-full flex-1 mr-2 md:mr-7 mt-4 px-3 md:px-6 flex flex-col gap-4 md:gap-6 overflow-y-auto scrollbar-none">
+    <div className="bg-gray-950 text-white relative w-full flex-1 flex flex-col gap-0 md:gap-6 overflow-y-auto scrollbar-none rounded-t-2xl">
 
       {/* Top Navbar */}
-      <div className="flex items-center justify-between border-b border-gray-800 pb-2">
-        <h1 className="text-lg md:text-2xl font-bold">FloatChat</h1>
+      <div className="flex items-center justify-between border-b border-gray-800  px-1 py-2 mx-3">
+        <SidebarTrigger className=" text-cyan-400"/>
+
+        {/* <h1 className="text-lg md:text-2xl font-bold">FloatChat</h1> */}
         <Link 
           to="/dashboard" 
-          className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1 md:py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors duration-200 text-xs md:text-sm font-medium"
+          className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-cyan-700 hover:bg-cyan-700 text-white rounded-lg transition-colors duration-200 text-xs md:text-sm font-medium"
         >
           <EarthIcon size={14} className="md:w-4 md:h-4" />
           <span className="hidden sm:inline">Dashboard</span>
           <span className="sm:hidden">Map</span>
         </Link>
-        {/* <img
-          className="w-12 h-12 rounded-full border-2 border-gray-600"
-          src="https://media.licdn.com/dms/image/D4D03AQH1b0nX4nXr4Q/profile-displayphoto-shrink_800_800/0/1683296326461?e=1701302400&v=beta&t=Yk2f1y8kqf1p3p5iU1K5E6mM2z7c3c3F4b3F6F6F6F6"
-          alt="Profile"
-        /> */}
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col ">
+      <div className="flex-1 w-[80%] mx-auto flex flex-col">
         {!showResult ? (
           <>
             {/* Greeting */}
@@ -71,9 +70,9 @@ const ChatSection: React.FC = () => {
             </div>
 
             {/* Suggestion Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mt-4 md:mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-7 mt-13 md:mt-15">
               {[
-                "Sea temperature and salinity trends in the central Philippine Sea (126°-130°E, 10°-15°N) over the past month.",
+                "Sea temperature and salinity trends in the Philippine Sea (126°-130°E, 10°-15°N) over the past month.",
                 "What is the surface temperature and salinity at -64.870163 longitude, 42.330696 latitude?",
                 "Comparison of temperature profiles between the eastern and western equatorial Indian Ocean.",
                 "Sea surface temperature changes over the past week at western equatorial Indian Ocean.",
@@ -81,7 +80,7 @@ const ChatSection: React.FC = () => {
                 <div
                   key={idx}
                   onClick={() => handleCardClick(text)}
-                  className="bg-[#0f111a] cursor-pointer rounded-xl p-3 md:p-6 text-white shadow-[0_0_20px_rgba(0,255,255,0.2)] border border-cyan-400/20 hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] transition-shadow duration-300 text-sm md:text-base"
+                  className="bg-[#0f111a] cursor-pointer rounded-xl p-3 md:pt-4 md:px-3 text-gray-300 shadow-[0_0_5px_rgba(0,255,255,0.2)] border border-cyan-400/20 hover:shadow-[0_0_6px_rgba(0,255,255,0.4)] transition-shadow duration-300 text-sm md:text-base text-center"
                 >
                   {text}
                 </div>
@@ -96,14 +95,14 @@ const ChatSection: React.FC = () => {
               messages.map((message, index) => (
                 <div key={index} className="space-y-2 md:space-y-3">
                   <UserQuerry Text={message.userMessage} />
-                  <BotReply Text={message.AIMessage} />
+                  <BotReply Text={message.AIMessage} plotsData={message.plots_data} />
                 </div>
               ))
             ) : (
               // Fallback to current conversation
               <>
                 {recentPrompt && <UserQuerry Text={recentPrompt} />}
-                <BotReply Text={result} loading={loading} />
+                <BotReply Text={result} loading={loading} plotsData={currentPlotsData} />
               </>
             )}
             
@@ -111,18 +110,13 @@ const ChatSection: React.FC = () => {
             {loading && messages.length > 0 && (
               <>
                 {recentPrompt && <UserQuerry Text={recentPrompt} />}
-                <BotReply Text="" loading={true} />
+                <BotReply Text="" loading={true} plotsData={[]} />
               </>
             )}
+
           </div>
         )}
       </div>
-
-      {/* Static Example Messages
-      <div className="mt-6 space-y-3">
-        <UserQuerry Text="hello, i am user hello, i am user hello, i am user" />
-        <BotReply Text="hello, i am bot" />
-      </div> */}
     </div>
   );
 };

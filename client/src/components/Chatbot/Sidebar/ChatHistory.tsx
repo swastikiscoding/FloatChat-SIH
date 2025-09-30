@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useCallback } from "react";
 import { Context } from "../context/Context.tsx";
 import { axiosInstance } from "../../../utils/axiosInstance";
 import { useAuth } from "@clerk/clerk-react";
+import { Plus } from "lucide-react";
 
 interface Chat {
   _id: string;
@@ -68,25 +69,26 @@ const ChatHistory = () => {
    const getChatTitle = (chat: Chat) => {
      // Handle cases where title might be undefined or empty
      const title = chat.title || "Untitled Chat";
-     return title.length > 20 ? title.slice(0, 20) + ".." : title;
+     return title.length > 50 ? title.slice(0, 50) + "..." : title;
    };
   
   return (
-    <div className="pl-2 md:pl-3 pr-1 text-white">
+    <div className="mx-3 text-white">
       {/* New Chat Button */}
       <div className="mb-3 md:mb-4">
         <button
           onClick={handleNewChat}
-          className="w-full text-left rounded-md pl-2 md:pl-3 py-2 text-xs md:text-sm font-medium text-cyan-400 hover:bg-gray-800 transition border border-cyan-400/30"
+          className="w-full text-left rounded-md pl-2 md:pl-3 py-2 text-xs md:text-sm font-medium text-cyan-400 hover:bg-gray-800 transition border border-cyan-400/30 bg-gray-900"
         >
-          + New Chat
+          <div className="flex items-center gap-2">
+            <Plus className="w-5 h-5"
+             />
+            <span>New Chat</span>
+          </div>
         </button>
       </div>
 
       {/* Chat History */}
-      <div className="text-gray-400 text-xs uppercase tracking-wide mb-2 pl-2 md:pl-3">
-        Recent Chats
-      </div>
       {loading && chatHistory.length === 0 ? (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
@@ -97,7 +99,7 @@ const ChatHistory = () => {
         </div>
       ) : (
         <ul className="space-y-2">
-          {chatHistory && chatHistory.length > 0 ? chatHistory.map((chat) => (
+          {chatHistory.map((chat) => (
             <li
               key={chat._id}
               onClick={() => handleChatClick(chat._id)}
@@ -107,13 +109,7 @@ const ChatHistory = () => {
             >
               {getChatTitle(chat)}
             </li>
-          )) : (
-            !loading && (
-              <div className="text-gray-500 text-xs md:text-sm pl-2 md:pl-3">
-                No chats yet. Start a conversation!
-              </div>
-            )
-          )}
+          ))}
         </ul>
       )}
     </div>
