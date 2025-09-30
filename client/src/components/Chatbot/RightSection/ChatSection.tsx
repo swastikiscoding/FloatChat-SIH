@@ -17,6 +17,7 @@ const ChatSection: React.FC = () => {
     loading,
     showResult,
     messages,
+    currentPlotsData,
   } = useContext(Context);
 
   // Handle card click
@@ -94,14 +95,14 @@ const ChatSection: React.FC = () => {
               messages.map((message, index) => (
                 <div key={index} className="space-y-2 md:space-y-3">
                   <UserQuerry Text={message.userMessage} />
-                  <BotReply Text={message.AIMessage} />
+                  <BotReply Text={message.AIMessage} plotsData={message.plots_data} />
                 </div>
               ))
             ) : (
               // Fallback to current conversation
               <>
                 {recentPrompt && <UserQuerry Text={recentPrompt} />}
-                <BotReply Text={result} loading={loading} />
+                <BotReply Text={result} loading={loading} plotsData={currentPlotsData} />
               </>
             )}
             
@@ -109,7 +110,7 @@ const ChatSection: React.FC = () => {
             {loading && messages.length > 0 && (
               <>
                 {recentPrompt && <UserQuerry Text={recentPrompt} />}
-                <BotReply Text="" loading={true} />
+                <BotReply Text="" loading={true} plotsData={[]} />
               </>
             )}
 

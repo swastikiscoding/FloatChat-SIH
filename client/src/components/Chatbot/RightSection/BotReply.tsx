@@ -2,8 +2,20 @@ import { Shell } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useState, useEffect } from "react";
+import ChartVisualization from './ChartVisualization';
 
-const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
+interface PlotData {
+  title: string;
+  kind: string;
+  x_label: string;
+  y_label: string;
+  x: (number | string)[];
+  y: (number | string)[];
+  x_type?: string;
+  y_type?: string;
+}
+
+const BotReply = ( { Text, loading, plotsData }: { Text: string; loading?: boolean; plotsData?: PlotData[] } ) => {
   const [speaking, setSpeaking] = useState(false);
 
   const handleSpeak = () => {
@@ -89,6 +101,11 @@ const BotReply = ( { Text, loading }: { Text: string; loading?: boolean } ) => {
               
               {Text}
             </ReactMarkdown>
+            
+            {/* Render charts if plots_data exists */}
+            {plotsData && plotsData.length > 0 && (
+              <ChartVisualization plotsData={plotsData} />
+            )}
           </div>
         )}
       </div>
