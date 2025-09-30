@@ -36,7 +36,7 @@ Today is {current_date}.
 """
 
 student_sys_prompt = \
-"""Explain everything you are doing; define all terminologies, provide examples for concepts wherever possible.
+"""Student Mode: Explain everything you are doing; define all terminologies, provide examples for concepts wherever possible.
 Keep the tone friendly and engaging, and conversations educational.
 """
 
