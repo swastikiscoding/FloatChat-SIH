@@ -49,9 +49,9 @@ const RightBottom = () => {
         type="button"
         onClick={startListening}
         disabled={loading}
-          className="absolute right-20 top-11.5 p-1 sm:right-35 sm:top-[55px] -translate-y-1/2 
-               bg-[#4A5565] text-white rounded-full border-1 border-[#6E7784] sm:p-1.5
-               hover:bg-gray-600 transition cursor-pointer"
+          className="absolute right-12 md:right-16 top-1/2 -translate-y-1/2 p-1.5 md:p-2
+               bg-[#4A5565] text-white rounded-full border border-[#6E7784]
+               hover:bg-gray-600 transition cursor-pointer z-10"
   >
         {listening ? "🎙️" : <CiMicrophoneOn color='black' size={16}/>}
       </button>
