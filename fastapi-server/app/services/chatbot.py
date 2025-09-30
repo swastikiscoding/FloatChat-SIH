@@ -41,7 +41,7 @@ Keep the tone friendly and engaging, and conversations educational.
 """
 
 researcher_sys_prompt = \
-"""No need to explain basic concepts. Feel free to use technical jargon."""
+"""Research Mode: No need to explain basic concepts. Feel free to use technical jargon. Give detailed responses."""
 
 
 model = OpenAIChatModel(
