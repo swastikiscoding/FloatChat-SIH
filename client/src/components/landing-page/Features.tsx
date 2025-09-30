@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import myImage from "../../assets/img.jpg";
+import myImage from "../../assets/img2.jpeg";
 import tick from "../../assets/tick.jpg";
-import img2 from "../../assets/graph.jpg";
+import img2 from "../../assets/new_graph.png";
 
 const container: Variants = {
   hidden: { opacity: 0 },
