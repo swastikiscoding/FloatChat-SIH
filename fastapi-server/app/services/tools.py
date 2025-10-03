@@ -13,7 +13,7 @@ from loguru import logger
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
-CACHE_DIR = str(BASE_DIR / 'cache')
+#CACHE_DIR = str(BASE_DIR / 'cache')
 
 sources = [
     'erddap',
@@ -57,7 +57,7 @@ def load_argo_profile(
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
-            cache=True, cachedir=CACHE_DIR
+            #cache=True, cachedir=CACHE_DIR
         )
         df = fetcher.profile(float_id, cyc).to_dataframe().reset_index()
     except FileNotFoundError as e:
@@ -104,7 +104,7 @@ def load_argo_float(
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
-            cache=True, cachedir=CACHE_DIR
+            #cache=True, cachedir=CACHE_DIR
         )
         df = fetcher.float(float_id).to_dataframe().reset_index()
     except FileNotFoundError as e:
@@ -163,7 +163,7 @@ def load_argo_region(
             ds=dataset, # 'phy' or 'bgc'
             #parallel=True,
             progress=True,
-            cache=True, cachedir=CACHE_DIR
+            #cache=True, cachedir=CACHE_DIR
         )
         df = fetcher.region(box).to_dataframe().reset_index()
     except FileNotFoundError as e:

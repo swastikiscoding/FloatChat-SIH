@@ -58,7 +58,7 @@ const BotReply = ( { Text, loading, plotsData }: { Text: string; loading?: boole
         ) : (
           <div className="prose prose-sm md:prose prose-invert max-w-none break-words [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2">
             
-            {isError && (
+            {!isError && (
               <button onClick={handleSpeak} className="p-2 px-3 bg-[#007595] hover:bg-cyan-800 rounded-2xl mb-2 cursor-pointer" >{speaking ? "⏹ Stop" : "🔊 Speak"}</button>
             )}
             <ReactMarkdown
