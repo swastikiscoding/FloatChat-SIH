@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import myImage from "../../assets/img2.jpeg";
+import myImage from "../../assets/img2.png";
 import tick from "../../assets/tick.jpg";
 import img2 from "../../assets/new_graph.png";
 
