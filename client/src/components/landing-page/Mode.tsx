@@ -176,10 +176,10 @@ const GlowCard: React.FC<GlowCardProps> = ({
 
 const ModeSection: React.FC = () => {
   return (
-    <div className="bg-black text-white py-16 px-6 w-screen">
+    <div className="bg-black text-white pt-3 pb-16 px-6 w-screen ">
       <div className="sm:w-[80vw] mx-auto rounded-2xl p-10">
         <h2 className="text-3xl font-bold text-center mb-8">Choose the mode that fits you</h2>
-        <h2 className="font-extralight text-center mb-10">
+        <h2 className="font-extralight text-center mb-20">
           Choose your path to discovery — whether you're learning, researching, or exploring it all.
         </h2>
 

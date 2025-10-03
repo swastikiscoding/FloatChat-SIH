@@ -43,9 +43,9 @@ const floatAnim = {
 function Features() {
   return (
     <div>
-      <div className="flex items-center justify-center text-2xl sm:text-3xl font-bold pb-5 text-white">
-  AI Features
-</div>
+      <div className="flex items-center justify-center text-2xl sm:text-3xl font-bold pb-10 text-white">
+        AI Features
+      </div>
 
 
       <motion.div
