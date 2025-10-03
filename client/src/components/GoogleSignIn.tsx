@@ -1,7 +1,6 @@
 import { useSignIn } from "@clerk/clerk-react";
 import { FcGoogle } from "react-icons/fc";
 import icon from "../assets/shell_fevicon.svg"
-import clerkSvg from "../assets/clerkSvg.jpeg"
 
 export default function GoogleSignInButton() {
   const { signIn, isLoaded } = useSignIn();
@@ -25,16 +24,16 @@ export default function GoogleSignInButton() {
         className="rounded-4xl flex flex-col border border-cyan-400
           bg-gradient-to-b from-black via-gray-900/90 to-gray-600/25
           shadow-[6px_6px_20px_-2px_rgba(34,211,238,0.5)]
-          w-full max-w-xs h-auto px-4 py-6
-          sm:w-108/480 sm:h-3/7 sm:max-w-none sm:px-0 sm:py-0"
+          w-full max-w-xs h-auto px-1 py-5
+          sm:w-106/480 sm:h-11/28 sm:max-w-none sm:px-0 sm:py-0"
       >
-        <div className="flex gap-2 items-center rounded-t-4xl p-2 mt-0 mb-2 sm:p-4 sm:mt-1 sm:mb-1">
+        <div className="flex gap-2 items-center rounded-t-4xl p-2 mt-0 mb-2 sm:p-4 sm:mt-1 sm:mb-0">
           <img src={icon} alt="" className="w-6 h-6 sm:w-7 sm:h-7" />
           <span className="font-semibold text-lg sm:text-2xl">FloatChat</span>
         </div>
-        <div className="rounded-b-4xl flex flex-col items-center justify-around">
-          <div className="text-base mt-2 mb-3 p-1 text-cyan-400 font-light sm:text-xl sm:mt-3 sm:mb-3">Login</div>
-          <div className="mb-3 rounded-xl w-full flex justify-center">
+        <div className="rounded-b-4xl flex flex-col items-center justify-around mt-2 sm:mt-5">
+          <div className="text-base mt-2 mb-3 p-1 text-cyan-400 font-light sm:text-xl sm:mb-5">Login</div>
+          <div className=" rounded-xl w-full flex justify-center">
             <button
               onClick={handleGoogleSignIn}
               className="p-3 my-4 sm:mt-4 flex justify-center items-center text-gray-200 sm:w-auto
