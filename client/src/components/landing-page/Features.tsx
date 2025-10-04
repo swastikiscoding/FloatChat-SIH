@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import myImage from "../../assets/img.jpg";
+import myImage from "../../assets/img2.png";
 import tick from "../../assets/tick.jpg";
-import img2 from "../../assets/graph.jpg";
+import img2 from "../../assets/new_graph.png";
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -43,9 +43,9 @@ const floatAnim = {
 function Features() {
   return (
     <div>
-      <div className="flex items-center justify-center text-2xl sm:text-3xl font-bold pb-5 text-white">
-  AI Features
-</div>
+      <div className="flex items-center justify-center text-2xl sm:text-3xl font-bold pb-10 text-white">
+        AI Features
+      </div>
 
 
       <motion.div
